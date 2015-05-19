@@ -1,8 +1,9 @@
 %!TEX root = ../report.tex
-Section\chapter{Feature extraction} % (fold)
-\label{sec:feature_extraction}
-The goal of this chapter is to explain how the ball used as the target object is detected in both images. With these positions the stereopsis can be computed as explained in \ref{sec:stereopsis} and hence the 3D position of the ball in the world can be obtained.
-The tracking of the object is a function implemented inside the node "balltracker" explained in section \ref{sec:structure}.
+\chapter{Feature extraction} % (fold)
+\label{chap:feature_extraction}
+The goal of this chapter is to explain how the ball used as the target object is detected in both images. 
+With these positions the stereopsis can be computed as explained in \ref{chap:stereopsis} and hence the 3D position of the ball in the world can be obtained.
+The tracking of the object is a function implemented inside the node "balltracker" explained in section \ref{chap:ros_nodes_structure}.
 
 \section{Methods}
 To achieve a reliable detection of the target in both images it was decided to use the contour finder provided by OpenCV. For doing so a binary image is need as an input for the contour finder as this function uses the algorithm in \cite{suzuki}.
