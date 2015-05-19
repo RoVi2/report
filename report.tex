@@ -1,12 +1,19 @@
 %!TEX root = report.tex
 
 %---Document Class---%
-\documentclass[]{report}
+\documentclass[12pt]{report}
 
 %---Packages---%
 \usepackage{authblk} %Title
 \usepackage[hidelinks]{hyperref} %Emails in Title
 \usepackage[backend=biber,style=numeric]{biblatex} %Bibliography
+\usepackage{iwona} % Use the Iwona font for the document text
+\usepackage[a4paper, margin=1.2in]{geometry}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{sectsty}
+\chapterfont{\color{Violet}}  % sets colour of chapters
+\sectionfont{\color{Black}}  % sets colour of sections
+\subsectionfont{\color{Gray}}  % sets colour of sections
 
 %---Bibliography sources---%
 \bibliography{bibliography.bib}

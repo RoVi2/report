@@ -1,22 +1,22 @@
 %!TEX root = ../report.tex
 
-\section{Stereovision} % (fold)
+\chapter{Stereovision} % (fold)
 \label{sec:stereopsis}
 
-\subsection{Introduction}
-In this section, the solution adopted for the location of the target in the 3D space through the vision system, the reasons that led to this approach, the assumptions made and the obtained results are presented. A more detailed explanation of the 2D image processing performed for the target tracking can be found in the next section.
+\section{Introduction}
+In this chapter, the solution adopted for the location of the target in the 3D space through the vision system, the reasons that led to this approach, the assumptions made and the obtained results are presented. A more detailed explanation of the 2D image processing performed for the target tracking can be found in the next section.
 
-\subsection{Stereopsis}
+\section{Stereopsis}
 Due to the fact that two vision systems were available on the setup, the first step was to decide which one to employ and the method to compute disparity. After a slight evaluation of resources the chosen one was the stereo rig, utilized to carry out sparse stereo with a single well-defined point. 
 
 Through the acquired pairs of images, the pixel coordinates of the center of gravity of the target are extracted by the algorithm presented in section 1.2 and they are used to calculate its 3D coordinates referred to the camera reference frame by means of triangulation.
 
-\subsection{Camera model}
+\section{Camera model}
 
 
-\subsection{Calibration}
+\section{Calibration}
 
-\subsection{Triangulation}
+\section{Triangulation}
 
 
-% section stereopsis (end)
+% chapter stereopsis (end)

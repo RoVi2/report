@@ -1,10 +1,10 @@
 %!TEX root = ../report.tex
-Section\section{Feature extraction} % (fold)
+Section\chapter{Feature extraction} % (fold)
 \label{sec:feature_extraction}
 The goal of this chapter is to explain how the ball used as the target object is detected in both images. With these positions the stereopsis can be computed as explained in \ref{sec:stereopsis} and hence the 3D position of the ball in the world can be obtained.
 The tracking of the object is a function implemented inside the node "balltracker" explained in section \ref{sec:structure}.
 
-\subsection{Methods}
+\section{Methods}
 To achieve a reliable detection of the target in both images it was decided to use the contour finder provided by OpenCV. For doing so a binary image is need as an input for the contour finder as this function uses the algorithm in \cite{suzuki}.
 The binary image is obtained by first converting the input image from RGB to HSV colorspace. The reason for this is that the last one provides an easier way of tracking colours more complex than the pure red, green or blue. Then, the proper values for the hue, saturation and value are obtained by trial and error and then the 3 channels are thresholded, producing binary image that can be seen in figure \ref{fig:binary_image}. However, this process yields some artefacts in the image that need to be removed for the contour finder not to detect too many unnecessary contours.
  
@@ -48,8 +48,11 @@ centroid_{X}=\frac{m_{10}}{m_{00}} \qquad centroid_{Y}=\frac{m_{01}}{m_{00}}
 \label{eq:centroids}
 \end{equation}
 
-\subsection{Results}
-Several variations of the algorithm stated above were tested before ending up with that one. However, the original ball given as a marker to be tracked was completely white. Therefore, as the laboratory where the workcells are situated has high ceilings and the only windows are close to them, the sun was hitting with a high angle. This illumination configuration produced very bright spots on the top of the ball (easily seen by the cameras) while the rest of the ball stayed with less brightness. In addition, the walls surrounding the workcell are mainly white and, at certain moments of the day very bright. Consequently, tracking the white ball was a very difficult task. To fix this issue, the ball was covered with a piece of green paper that made the colour detection easier. Nevertheless, the high inclination of the sun still produced a spot of higher brightness in the top of the ball that wasn't detected by the algorithm. For fixing this, the closing morphology operation was performed as explained in the section above, which provided a much circular shape to the ball in the image than the one obtained by simply thresholding.
+\section{Results}
+Several variations of the algorithm stated above were tested before ending up with that one. However, the original ball given as a marker to be tracked was completely white. Therefore, as the laboratory where the workcells are situated has high ceilings and the only windows are close to them, the sun was hitting with a high angle. 
+
+This illumination configuration produced very bright spots on the top of the ball (easily seen by the cameras) while the rest of the ball stayed with less brightness. In addition, the walls surrounding the workcell are mainly white and, at certain moments of the day very bright. Consequently, tracking the white ball was a very difficult task. To fix this issue, the ball was covered with a piece of green paper that made the colour detection easier. Nevertheless, the high inclination of the sun still produced a spot of higher brightness in the top of the ball that wasn't detected by the algorithm. For fixing this, the closing morphology operation was performed as explained in the section above, which provided a much circular shape to the ball in the image than the one obtained by simply thresholding.
+
 All in all, the final detection of the ball was stable enough to provide consistent data for the stereopsis and the trajectory prediction.
 
-% section feature_extraction (end)~\ref{sec:}
+% chapter feature_extraction (end)~\ref{sec:}
