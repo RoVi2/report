@@ -20,30 +20,59 @@ The mathematical model assumed for the camera is the basic pinhole structure, de
 This model defines a linear projection from the 3D world to the image plane, and contains the intrinsic parameters that relates the camera and the image reference frames as showed in equation \ref{eq:pinhole_model}. 
 
 \begin{equation}
-x = K·A·X
+x = P·X
 \label{eq:pinhole_model}
 \end{equation}  
 
-***** Define the equation members
+Where X represent the homogeneous coordinates of a 3D point and x its projection in the image plane in pixel coordinates.
 
-Since the linearity assumed by this model does not hold due to imperfections in the lens, a distortion model needs to be added to the calculations. The Plumb Bob distortion model, introduced in ***(Brown) is applied here since it is the one used by ROS.
+Since the linearity assumed by this model does not hold due to imperfections in the lens, a distortion model needs to be added to the calculations in order to correct the deviations on the real cameras. The Plumb Bob distortion model, introduced in ***(Brown) is applied here since it is the one used by ROS.
 
 \subsection{Calibration}
 In order to obtain the intrinsic parameters for the camera model, a stereo calibration process based on the technique presented in ***(Zhang) has been carried out for both Bumblebee2 1394a cameras by means of a ROS node. 
-The node just needs to be provided enough images of a 2D calibration pattern in different positions. It computes the projection of the points on the pattern and solves the resulting equations system in a least squares fashion as described in ****reference(). The output of the node are the camera and projection matrices of the cameras, the set of parameters for the distortion model and the homography for the image rectification. 
+The node only needs to be provided enough images of a 2D calibration pattern in different positions. It computes the projection of the points on the pattern and solves the resulting equations system in a least squares fashion as described in ****reference(). The output of the node are the camera and projection matrices of the cameras, the set of parameters for the distortion model and the homography for the image rectification. Since the projection matrices will be used for the computation of the fundamental matrix during the triangulation calculus, their quality will heavily influence on the overall performance of the system. Therefore, a special commitment has been applied to this step. 
 
-\subsection{Triangulation}
-At this point the algorithm yields the camera matrices and the image point correspondences {xi, xi'}.
-The next step is to define a suitable triangulation method light but robust enough to be executed in live with sufficient accuracy, since the whole system will rely on this task. 
 
-Due to the acquisition errors in the measured image coordinates, a simple approach based on back-propagation of rays from the image points is very unlikely to succeed. This is because in most of the cases the rays will not intersect in the 3D point. 
+\subsection{Reconstruction of depth}
+At this point the algorithm yields the camera matrices and the correspondent image points {xi, xi'}. This information can be utilized to calculate depth 
+
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/Back-Projection}
+    \includegraphics[width=0.5\textwidth]{images/triangulate}
+    \caption{Depth measurement based on disparity}
+    \label{fig:Depth_disparity}
+\end{figure}
+
+
+
+\subsection{Triangulation}
+The next step is to define a suitable triangulation method light but robust enough to be executed in live with sufficient accuracy, since the whole system will rely on this task. 
+An immediate, simple approach could consists in back-projecting the correspondent image points, by means of the projection matrix, and find the point in the space in which the intersect. However, due to the acquisition errors in the measured image coordinates, this procedure is very unlikely to succeed. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/Back-Projection}
     \caption{Back-Projection rays error}
     \label{fig:Back-Projection}
 \end{figure}
+
+This is because in most of the cases the rays will not intersect in the 3D point, since there is not a point X that satisfies the equations \ref{eq:projection}. 
+
+\begin{equation}
+	\centering
+	x  = P·X  $$\\
+	x' = P·X' $$
+	\label{eq:projection}
+\end{equation} 
+
+
+
+
+
+
+
+
 
 
 % section stereopsis (end)
