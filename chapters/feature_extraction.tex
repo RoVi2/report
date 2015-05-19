@@ -1,11 +1,12 @@
 %!TEX root = ../report.tex
 Section\section{Feature extraction} % (fold)
 \label{sec:feature_extraction}
-The goal of this chapter is to explain how the ball used as the tracking object was detected in both images. With these positions the stereopsis can be computed as explained in \ref{sec:stereopsis} and hence the 3D position of the ball in the world can be obtained.
-The tracking of the object was a function implemented inside the node "balltracker" explained in section \ref{sec:structure}.
+The goal of this chapter is to explain how the ball used as the target object is detected in both images. With these positions the stereopsis can be computed as explained in \ref{sec:stereopsis} and hence the 3D position of the ball in the world can be obtained.
+The tracking of the object is a function implemented inside the node "balltracker" explained in section \ref{sec:structure}.
 
 \subsection{Methods}
-For detecting the balls in both images the first approach was to user the opencv function "blur" to smooth the image in order to avoid having lots of very small contours with a kernel of 9x9 pixels. After this action the image was converted from RGB colorspace to HSV one. The reason for this is that generally is much simpler and precise to do color segmentation in the HSV colorspace rather than in RGB. This segmentation was performed using the opencv function "inrange" with minimum and maximum limits of 25 to 100 for hue, 70 to 255 for saturation and 100 to 255 for value. This process produced a binary image with some small artifacts spread in the image and the object to detect with some holes inside as it can be seen in figure \ref{fig:binary_image}.
+To achieve a reliable detection of the target in both images it was decided to use the contour finder provided by OpenCV. For doing so a binary image is need as an input for the contour finder as this function uses the algorithm in \cite{suzuki}.
+The binary image is obtained by first converting the input image from RGB to HSV colorspace. The reason for this is that the last one provides an easier way of tracking colours more complex than the pure red, green or blue. Then, the proper values for the hue, saturation and value are obtained by trial and error and then the 3 channels are thresholded, producing binary image that can be seen in figure \ref{fig:binary_image}. However, this process yields some artefacts in the image that need to be removed for the contour finder not to detect too many unnecessary contours.
  
 \begin{figure}[h]
     \centering
@@ -14,7 +15,7 @@ For detecting the balls in both images the first approach was to user the opencv
     \label{fig:binary_image}
 \end{figure}
 
-For removing those artifacts an opening morphological operation was performed with a kernel size of 9x9 pixels. Once the undesired objects were erased by the previous operation, a closing morphological operation was applied in order to remove the holes inside the object to be detected with the same kernel size. The result of these operations can be seen in figure \ref{fig:filtered_image}.
+For removing those artefacts two morphological operators are applied. First of all an opening operation with a square kernel of 9x9 pixels that removes the small artefacts spread across the image and keeps the target intact. After this, a closing operation is perform with the same kernel. In this case, the aim of this is reducing the size of the gaps that appear inside the target after the thresholding in order to get a solid object. The result of this process can be seen in figure \ref{fig:filtered_image}.
 
 \begin{figure}[h]
     \centering
@@ -23,23 +24,28 @@ For removing those artifacts an opening morphological operation was performed wi
     \label{fig:filtered_image}
 \end{figure}
 
-Once that the image is clean enough the opencv function "findcontours" is used, and for every contour that it detects the arc length and area are computed. Then, a radius threshold is applied to these contours. The value selected for the threshold is 30 pixels, and it was obtained by trial and error. Given the area and perimeter of the contours the threshold is applied following the equations \ref{eq:circ_area} and \ref{eq:circ_perimeter}.
-
-\begin{equation}
-area_{contour}>2*\pi*radius_{threshold}^{2}
-\label{eq:circ_area}
-\end{equation}
+After removing the smallest objects from the binary image and closed the gaps in the remaining ones the finding contours function is applied, which provides an array with the detected contours. Following, the area and the outer perimeter of all the contours are computed. With these values, a radius threshold is applied so that only the contours with enough radius are accepted. For doing so, the equations for the perimeter and the area of a circumference are applied as it can be seen in equations \ref{eq:circ_perimeter} and \ref{eq:circ_area}.
 
 \begin{equation}
 perimeter_{contour}>2*\pi*radius_{threshold}
 \label{eq:circ_perimeter}
 \end{equation}
 
-Following, the circularity of the contours that have a radius bigger than the threshold is computed following equation \ref{eq:circularity}. Then, the moments of the ones that have a circularity bigger than 0,2 are computed and hence, their centroids are extracted and sent to the stereopsis function of the node. Again, the value of 0,2 for the circularity was extracted by trial and error. The value is rather low because the output of the previous filtering phases doesn't keep a circular shape properly.
+\begin{equation}
+area_{contour}>2*\pi*radius_{threshold}^{2}
+\label{eq:circ_area}
+\end{equation}
+
+Following, the circularity of the contours that have a radius bigger than the specified threshold is computed following equation \ref{eq:circularity}, which gives a value between 1 and 0 (being 1 a perfect circle, and 0 a straight line). Having this value computed, a threshold for the circularity is set so that only the target passes it. Finally, the moments of the remaining contour (the target) are calculated so that the centroids can be computed according to equation \ref{eq:centroids}. Then, this values are returned so that the stereopsis function can compute the 3D points for the target.
 
 \begin{equation}
 circularity=\frac{4*\pi*area_{contour}}{perimeter_{contour}^{2}}
 \label{eq:circularity}
+\end{equation}
+
+\begin{equation}
+centroid_{X}=\frac{m_{10}}{m_{00}} \qquad centroid_{Y}=\frac{m_{01}}{m_{00}}
+\label{eq:centroids}
 \end{equation}
 
 \subsection{Results}
