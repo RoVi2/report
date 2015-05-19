@@ -1,10 +1,10 @@
 %!TEX root = ../report.tex
-Section\section{Feature extraction} % (fold)
-\label{sec:feature_extraction}
-The goal of this chapter is to explain how the target object is detected in both images. With these positions the stereopsis can be computed as explained in \ref{sec:stereopsis} and hence the 3D position of the target in the world can be obtained.
-The tracking of the object is a function implemented inside the node "balltracker" explained in section \ref{sec:structure}.
+\chapter{Feature extraction} % (fold)
+\label{chap:feature_extraction}
+The goal of this chapter is to explain how the target object is detected in both images. With these positions the stereopsis can be computed as explained in chapter \ref{chap:stereopsis} and hence the 3D position of the target in the world can be obtained.
+The tracking of the object is a function implemented inside the node "balltracker" explained in chapter \ref{chap:ros_nodes_structure}.
 
-\subsection{Methods}
+\section{Methods}
 The underlying problem of the feature extraction is providing a feature strong enough that avoids correspondence problems such as occluding edges, homogeneous areas and repetitive structures.
 In the case of occluding edges, the main problem is that a feature in the border of the object for one camera usually matches another one from the other camera (specially for round or cylindrical objects) although they are not the same point.
 On the other hand, the problem with homogeneous areas is that all the patches of a smooth surface with a constant illumination look exactly the same and can be mismatched.
@@ -59,8 +59,11 @@ centroid_{X}=\frac{m_{10}}{m_{00}} \qquad centroid_{Y}=\frac{m_{01}}{m_{00}}
 \label{eq:centroids}
 \end{equation}
 
-\subsection{Results}
-Several variations of the algorithm stated above were tested before ending up with that one. However, the original ball given as a marker to be tracked was completely white. Therefore, as the laboratory where the workcells are situated has high ceilings and the only windows are close to them, the sun was hitting with a high angle. This illumination configuration produced very bright spots on the top of the ball (easily seen by the cameras) while the rest of the ball stayed with less brightness. In addition, the walls surrounding the workcell are mainly white and, at certain moments of the day very bright. Consequently, tracking the white ball was a very difficult task. To fix this issue, the ball was covered with a piece of green paper that made the colour detection easier. Nevertheless, the high inclination of the sun still produced a spot of higher brightness in the top of the ball that wasn't detected by the algorithm. For fixing this, the closing morphology operation was performed as explained in the section above, which provided a much circular shape to the ball in the image than the one obtained by simply thresholding.
+\section{Results}
+Several variations of the algorithm stated above were tested before ending up with that one. However, the original ball given as a marker to be tracked was completely white. Therefore, as the laboratory where the workcells are situated has high ceilings and the only windows are close to them, the sun was hitting with a high angle. 
+
+This illumination configuration produced very bright spots on the top of the ball (easily seen by the cameras) while the rest of the ball stayed with less brightness. In addition, the walls surrounding the workcell are mainly white and, at certain moments of the day very bright. Consequently, tracking the white ball was a very difficult task. To fix this issue, the ball was covered with a piece of green paper that made the colour detection easier. Nevertheless, the high inclination of the sun still produced a spot of higher brightness in the top of the ball that wasn't detected by the algorithm. For fixing this, the closing morphology operation was performed as explained in the section above, which provided a much circular shape to the ball in the image than the one obtained by simply thresholding.
+
 All in all, the final detection of the ball was stable enough to provide consistent data for the stereopsis and the trajectory prediction.
 
-% section feature_extraction (end)~\ref{sec:}
+% chapter feature_extraction (end)~\ref{sec:}
