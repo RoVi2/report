@@ -97,14 +97,44 @@ A natural cubic interpolation as shown in the figure \ref{fig:cubic interpolatio
 
 \section{Collision avoidance} % (fold)
 \label{sec:collision_avoidance}
-For each interpolated Q, the robot's collision with the environment or itself is checked. If a future collision is detected the Rapid-exploring Random Tree RRT in its variance RRT-Connect \cite{RRTConnect} is used.\\
+For each interpolated Q, a single query planner with in the robot's collision free space, is checked. If a future collision is detected the Rapid-exploring Random Tree RRT in its variance RRT-Connect \cite{RRTConnect} is used.\\
 
-This method is an online method to generate random configurations in the collision free space. This is found by generating random configurations that generated at a defined distance ones from others and then tried to join them, generating a mesh of possible no-colliding configuration in the 3D space. A path of configuration can be made from two different nodes by different methods as, for example, A*.
+This method is an online method to generate random configurations in the collision free space.
+The algorithm used is presented in the listing \ref{lis:rrt_connect_planner} and it defines how from a $q_{init}$ to a $q_{goal}$ \in \ $C_{free}$, a random configuration tree is expanded and connected  until the init reach the goal. The RRT-Connect (see figure \ref{fig:rrt_connect}) is not tunned by a parameter but the random Q's generation is defined by a defined distance and the used metric to defined that distance.
+
+\begin{lstlisting}[frame=tb, mathescape=true, xleftmargin=.28\textwidth, xrightmargin=.28\textwidth,caption=RRT-Connect Algorithm, label=lis:rrt_connect_planner]
+$\textbf{CONNECT}$($\Gamma$, $q$)
+ 1  repeat 
+ 2  S $\leftarrow$ EXTEND($\Gamma$,$q$);
+ 3  until not (S=Advanced)
+ 4  Return S;
+\end{lstlisting}
+\lstset{}
+
+\begin{lstlisting}[frame=tb, mathescape=true,xleftmargin=.13\textwidth, xrightmargin=.13\textwidth]
+$\textbf{RRT CONNECT PLANNER}$($q_{init}$,$q_{goal}$)
+ 1  $\Gamma_a$.init($q_{init}$);$\Gamma_b$.init($q_{goal}$);
+ 2  for k = 1 to K do
+ 3    q rand $\leftarrow$ RANDOM CONFIG();
+ 4      if not (EXTEND($\Gamma_a$,$q_{rand}$)=Trapped) then
+ 5        if (CONNECT($\Gamma_b$,$q_{new}$)=Reached) then
+ 6        Return PATH($\Gamma_a$,$\Gamma_b$);
+ 7    SWAP($\Gamma_a$,$\Gamma_b$);
+ 8  Return Failure
+\end{lstlisting}
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=0.4\textwidth]{figures/rrt_connect}
+	\caption{RRT-Connect Example}
+	\label{fig:rrt_connect}
+\end{figure}
+
 % section collision_avoidance (end)
 
 \section{Implementation} % (fold)
 \label{sec:implementation}
-\begin{figure}[!ht]
+\begin{figure}[!hb]
 	\centering
 	\includegraphics[height=16cm]{figures/path_planning_flowchart}
 	\caption{Flowchart of the path planning method}
