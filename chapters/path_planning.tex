@@ -5,7 +5,7 @@
 In this chapter, the path planning for the robot is presented.
 In the first part the path planning when keeping an object in sight is analyzed [\ref{sec:path_planning}]. Then, the constrained planning [\ref{sec:constrained_planning}] is introduced and follows with the path planning used: RRT-Connect [\ref{sec:path_planning}]. In the end, the implementation [\ref{sec:implementation_pathplanning}], where the constrained planned asumptions and the RRT-Connect parameters are explained, the experimental results [\ref{sec:experimental_results_pathplanning}] and the conclusions [\ref{sec:conclusions_pathplanning}]of this chapter are presented.
 
-\section{Path planning in keep object in sight} % (fold)
+\section{Path planning for keeping the target in sight} % (fold)
 \label{sec:path_planning_in_keep_object_in_sight}
 The problem treated is keeping an object in sight. 
 Due to the nature of the object's low speed to be tracked, the movement increments that the robot achieved are in the order of centimeters. 
@@ -14,7 +14,8 @@ This, with the low quantity of colliding objects in the work cell where the expe
 
 \section{Constrained planning} % (fold)
 \label{sec:constrained_planning}
-From now, the assumption of that the object is located is taken. 
+<<<<<<< HEAD
+From now the assumption of that the object is being located is made. 
 Despite the object tracked is referenced to the camera's frame, in the name of clarity, lets assume that the object tracked is in the world's reference frame. 
 For now, a point in the space is located along with the robot.
 The goal is to find a robot configuration that always allows to keep the camera in direction to the tracked object.
@@ -68,8 +69,6 @@ $\textbf{RRT CONNECT PLANNER}$($q_{init}$,$q_{goal}$)
 	\caption{RRT-Connect Example}
 	\label{fig:rrt_connect}
 \end{figure}
-
-
 % section path_planning (end)
 
 \section{Path optimization} % (fold)

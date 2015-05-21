@@ -1,19 +1,25 @@
 %!TEX root = ../report.tex
 \chapter{Feature extraction} % (fold)
 \label{chap:feature_extraction}
+\section{Introduction}
 The goal of this chapter is to explain how the target object is detected in both images. With these positions the stereopsis can be computed as explained in chapter \ref{chap:stereopsis} and hence the 3D position of the target in the world can be obtained.
 The tracking of the object is a function implemented inside the node "balltracker" explained in chapter \ref{chap:ros_nodes_structure}.
 
 \section{Methods}
+
+\subsection{Target definition}
 The underlying problem of the feature extraction is providing a feature strong enough that avoids correspondence problems such as occluding edges, homogeneous areas and repetitive structures.
 In the case of occluding edges, the main problem is that a feature in the border of the object for one camera usually matches another one from the other camera (specially for round or cylindrical objects) although they are not the same point.
 On the other hand, the problem with homogeneous areas is that all the patches of a smooth surface with a constant illumination look exactly the same and can be mismatched.
 Finally, the problem of repetitive surfaces affects mainly when it comes to matching images containing structures like fences or buildings which are usually very repetitive and can lead to mismatch features because they look too similar.
-To avoid these problems, it was decided to use a ball as the target object.
-The reason for this is that the whole area of the surface of the ball can be seen by each camera and, hence, its centroid detected, completely avoiding the occluding edges and the homogeneous surfaces. What is more, the ball itself is not a repetitive structure, so that doesn't produce a problem either.
 
+To avoid these problems, it was decided to use a ball as the target object.
+The reason for this is that the whole area of the surface of the ball can be seen by each camera and, hence, its centroid detected, completely avoiding the occluding edges and the homogeneous surfaces.
+What is more, the ball itself is not a repetitive structure, so that doesn't produce a problem either.
+
+\subsection{Image processing}
 To achieve a reliable detection of the target in both images it was decided to use the contour finder provided by OpenCV.
-For doing so a binary image is need as an input for the contour finder as this function uses the algorithm in \cite{suzuki}. 
+For doing so a binary image is needed as an input for the contour finder as this function uses the algorithm in \cite{suzuki}. 
 The binary image is obtained by first converting the input image from RGB to HSV colorspace.
 The reason for this is that the last one provides an easier way of tracking colours more complex than the pure red, green or blue.
 Then, the proper values for the hue, saturation and value are obtained by trial and error and then the 3 channels are thresholded, producing binary image that can be seen in figure \ref{fig:binary_image}.
