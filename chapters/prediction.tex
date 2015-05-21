@@ -7,6 +7,103 @@ In this chapter it is presented the algorithm used for predicting the trajectory
 For this purpose, the algorithm chosen is a Kalman filter \cite{kalman}.
 
 \section{Methods}
+The choice of the algorithm used for predicting the trajectory is not reduced only to the Kalman filter. Actually, there is also the option of implementing an Extended Kalman filter or a particle filter. The advantage of the Extended Kalman filter over the basic one is that the first one linearizes non-linear models locally. However, the movement prediction can be approximated by the equations of a constantly accelerated movement stated in equation \ref{eq:motion}, that can be written as a linear combination of matrices as it can be seen in equation \ref{eq:motion_mat}. Therefore, there is no need of linearizing them, so the option of the Extended Kalman filter is rejected.
+
+\begin{equation}
+\begin{multlined}
+p=p_{0}+v*t+\frac{1}{2}*a*t^{2} \\
+v=v_{0}+a*t \\
+a=a_{0} \\
+\end{multlined}
+\label{eq:motion}
+\end{equation}
+
+\begin{equation}
+\begin{bmatrix}
+x \\ y \\ z \\ v_{x} \\ v_{y} \\ v_{z} \\ a_{x} \\ a_{y} \\ a_{z}
+\end{bmatrix}_{m+1}
+=
+\begin{bmatrix}
+1 & 0 & 0 & t & 0 & 0 & \frac{1}{2}*t^{2} & 0 & 0 \\
+0 & 1 & 0 & 0 & t & 0 & 0 & \frac{1}{2}*t{2} & 0 \\
+0 & 0 & 1 & 0 & 0 & t & 0 & 0 & \frac{1}{2}*t^{2}	\\
+0 & 0 & 0 & 1 & 0 & 0 & t & 0 & 0 \\
+0 & 0 & 0 & 0 & 1 & 0 & 0 & t & 0 \\
+0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & t \\
+0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1
+\end{bmatrix}
+*
+\begin{bmatrix}
+x \\ y \\ z \\ v_{x} \\ v_{y} \\ v_{z} \\ a_{x} \\ a_{y} \\ a_{z}
+\end{bmatrix}_{m}
+\label{eq:motion_mat}
+\end{equation}
+
+On the other hand, the particle filter doesn't make much sense for this case. The main advantage about this filter is that it can use nonlinear equations \cite{kalman_lectures}, and the equations chosen for describing are linear. In addition, this filter "gives an approximate solution to an exact model" while the Kalman filter "gives an exact solution to an approximate model". Giving the fact that the Kalman filter is also much faster than the other one, it makes it the best option for this project.\\
+
+The way the Kalman filter works is by computing an a priori estimate of the state of the object to track \cite{OReilly}, being in the case of this project its 3D position, speed and acceleration. Equation \ref{eq:prev_state} shows how this a priori estimate is computed from the previous state of the system, where $x_{k}^{-}$ and $x_{k-1}$ are equivalent to the first term of equation \ref{eq:motion_mat}, F (transfer matrix) is equivalent to the matrix of equation \ref{eq:motion_mat} and $w_{k}$ is the process noise. This last variable is usually a random variable associated with random forces that change the state of the system, which in the case of this projects are quite important as the object to track is constantly being moved randomly by a human. It is assumed that this variable has a normal distribution $N(0,Q_{k})$ for a covariance matrix $Q_{k}$.
+Finally, matrix B relates the control inputs defined by $u_{k}$ to the state of the system. However, as the system has no control inputs being measured this term is removed for the sake of this project.
+
+\begin{equation}
+x_{k}^{-}=F*x_{k-1}+B*u_{k}+w_{k}
+\label{eq:prev_state}
+\end{equation}
+
+Then, some measurements are made. This can be direct measurements of the state of the system or not. In the case of this project they are not, as the only variables measured by the stereo system are the x, y and z positions of the object. The relation of this measurements is shown in equation \ref{eq:measurements}, where $z_{k}^{-}$ and $H_{k}$ (measurement matrix) are shown in equation \ref{eq:measurements_mats} and $v_{k}$ is the measurement noise. As in the previous case, this variable is independent from the Kalman algorithm and depends on the noise introduced my the measurement system, which in this project is the stereo vision system. It is again supposed that this variable has a normal distribution $N(0,R_{k}$ for a covariance matrix $R_{k}$.
+
+\begin{equation}
+z_{k}^{-}=H_{k}*x_{k}+v_{k}
+\label{eq:measurements}
+\end{equation}
+
+\begin{equation}
+z_{k}^{-}=
+\begin{bmatrix}
+z_{x} \\ z_{y} \\ z_{z}
+\end{bmatrix}
+\qquad
+H_{k}=
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+\label{eq:measurements_mats}
+\end{equation}
+
+With the a priori estimation of the state of the system and the measurements done, what is left is to compute the a priori error covariance \cite{OReilly} based on the transfer matrix, the previous error covariance and $Q_{k}$ (the process covariance). For doing so, equation \ref{eq:apriori_covariance} is applied.
+
+\begin{equation}
+P_{k}^{-}=F*P_{k-1}*F^{T}+Q_{k-1}
+\label{eq:apriori_covariance}
+\end{equation}
+
+Having the a priori error covariance computed, then it is time to calculate the \emph{Kalman gain} or \emph{Bleeding factor} using equation \ref{eq:kalman_gain}. This matrix establishes how much the estimation of the state can be trusted given its error covariances. When this matrix has vary high values it means that the a priori state prediction is trustworthy and it will be included in the final state prediction. However, if this values are close to 0 it means that this prediction is not that good and the final state prediction will rely mainly in the measurements.
+
+\begin{equation}
+K_{k}=P_{k}^{-}*H_{k}^{T}*(H_{k}*P_{k}^{-}*H_{k}^{T}+R_{k})
+\label{eq:kalman_gain}
+\end{equation}
+
+Finally, whenever there is a new measurement, the final state prediction $x_{k}$ is computed using equation \ref{eq:final_state} and the error covariance matrix $P_{k}$ is updated using equation \ref{eq:error_covariance}.
+
+\begin{equation}
+x_{k}=x_{k}^{-}+K_{k}*(z_{k}^{-}-H_{k}*x_{k}^{-})
+\label{eq:final_state}
+\end{equation}
+
+\begin{equation}
+P_{k}=(I-K_{k}*H_{k})*P_{k}^{-}
+\label{eq:error_covariance}
+\end{equation}
 
 
 % chapter prediction (end)
