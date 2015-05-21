@@ -2,16 +2,18 @@
 \documentclass[12pt]{report}
 
 %---Packages---%
+\usepackage[a4paper, margin=1.2in]{geometry} %Document settings 
 \usepackage{authblk} %Title
-\usepackage{graphicx}
+\usepackage{graphicx} %Figures
 \usepackage[hidelinks]{hyperref} %Emails in Title
+\usepackage{sectsty} %Change fonts
+\usepackage[usenames,dvipsnames]{xcolor} %Colors
+\usepackage{listings} %Code
+
 \renewcommand*\rmdefault{lmss} %font
-\usepackage[a4paper, margin=1.2in]{geometry}
-\usepackage[usenames,dvipsnames]{xcolor}
-\usepackage{sectsty}
-\chapterfont{\color{NavyBlue}}  % sets colour of chapters
-\sectionfont{\color{Black}}  % sets colour of sections
-\subsectionfont{\color{Gray}}  % sets colour of sections
+\chapterfont{\color{NavyBlue}}  %Sets colour of chapters
+\sectionfont{\color{Black}}  %Sets colour of sections
+\subsectionfont{\color{Gray}}  %Sets colour of sections
 
 %---Begin Document---%
 \begin{document}
