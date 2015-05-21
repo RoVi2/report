@@ -31,39 +31,16 @@ The Plumb Bob distortion model, introduced in \cite{Brown} is applied here since
 In order to obtain the intrinsic parameters for the camera model, a stereo calibration process based on the technique presented in \cite{Zhang} has been carried out for both Bumblebee2 1394a cameras by means of a ROS node. 
 
 The node only needs to be provided enough images of a 2D calibration pattern in different positions. 
-It computes the projection of the points on the pattern and solves the resulting equations system in a least squares fashion as described in ****reference(). 
+It computes the projection of the points on the pattern and solves the resulting equations system in a Least-squares fashion as described in \cite{Hartley}. 
 The output of the node are the camera and projection matrices of the cameras, the set of parameters for the distortion model and the homography for the image rectification. 
 Since the projection matrices will be used for the computation of the fundamental matrix during the triangulation calculus, their quality will heavily influence on the overall performance of the system. 
 Therefore, a special commitment has been applied to this step. 
 
-\section{Reconstruction of depth}
-At this point the algorithm computes the camera matrices and the correspondent image points {xi, xi'} for two given images of the target. 
-This information can be utilized to calculate depth by means of the disparity or difference in the x values of the image coordinates {xi, xi'}.
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\textwidth]{images/triangulate}
-    \caption{Depth measurement based on disparity}
-    \label{fig:Depth_disparity}
-\end{figure}
-
-The stereovision system showed in \ref{fig:Depth_disparity}, equivalent to the employed in the project, is configured such that the optical axes of the cameras are parallel. 
-This configuration yields horizontal epipolar lines and thus, eases the epipolar geometry resolution for this setup and could reduce the correspondence problem from two to one dimensions. However, as explained in \ref{chap:feature_extraction}, this has not been the approach adopted here. 
-
-Once the disparity has been extracted, it can be used to calculate the XYZ coordinates of a 3D points solving Thale's theorem for the resulting triangles in the image as showed in \ref{eq:depth_meas} 
-
-\begin{equation}
-	X = XB/d $$
-	Y = YB/d $$
-	Z = Zf/d 	
-	\label{eq:depth_meas}
-\end{equation}  
-
-The outputs from \ref{eq:depth_meas}, however, need to be adapted to the image reference frame. 
-
-\section{Triangulation}
-The next step is to define a suitable triangulation method light but robust enough to be executed in live with sufficient accuracy, since the whole system will rely on this task. 
-An immediate, simple approach could consists in back-projecting the correspondent image points, by means of the projection matrix, and find the point in the space in which the intersect. However, due to the acquisition errors in the measured image coordinates, this procedure is very unlikely to succeed. 
+\section{3D Reconstruction}
+In order to compute the depth for a pair of correspondent image points, a suitable triangulation method light but robust enough to be executed on line with sufficient accuracy must be found. 
+The task, trivial in theory, entails certain complexity due to the acquisition errors in the measured image coordinates. 
+An immediate, simple approach could consists in back-projecting the correspondent image points, by means of the projection matrices, and finding the 3D point in the space in which they intersect. 
+However, this procedure is very unlikely to succeed in most of the cases since the image points do not satisfy the epipolar constraint due the errors.
 
 \begin{figure}[h]
     \centering
@@ -77,16 +54,51 @@ This is because in most of the cases the rays will not intersect in the 3D point
 \begin{equation}
 	\centering
 	x  = P·X  $$\\
-	x' = P·X' $$
+	x' = P'X $$
 	\label{eq:projection}
 \end{equation} 
 
+\subsection{Triangulation}
+The applied method to estimate depth and compute the estimations of 3D positions is the defined for the OpenCV functions utilized in the developed algorithm. 
+This method is based on the direct linear transformation procedure to compute the estimation of the 3D point.
 
- 
+\subsubsection{Direct Linear Transformation}
+The equations \ref{eq:projection} are combined into a set of linear equations in X of the form \ref{eq:DLT} by eliminating the scale factor, where the matrix A is \ref{eq:DLT2}
 
+\begin{equation}
+	\centering
+	AX = 0 
+	\label{eq:DLT}
+\end{equation}
 
+\begin{equation}
+A =
+ \begin{pmatrix}
+  xP^{3T} - P^{1T} \\
+  yP^{3T} - P^{2T} \\
+  x'P^{'3T} - P^{'1T} \\
+  yP^{'3T} - P^{'2T}
+ \end{pmatrix}
+ \label{eq:DLT2}
+\end{equation}
 
+The way the DTL algorithm solves this set of redundant equations in the unknowns of X is by means of a Least-squares minimization problem in the absence of an exact solution. 
+The presence of noise reduces the problem to the minimization of \ref{eq:LSM} where e stands for the projection errors.
+The LS solution solution is given in equation \ref{eq:LSM_solution}.
 
+\begin{equation}
+	\centering
+	\lVert \mathbf{AX-e} \rVert 
+	\label{eq:LSM}
+\end{equation}
+
+\begin{equation}
+	\centering
+	X = [A^{T}A]^{-1}A^{T}e
+	\label{eq:LSM_solution}
+\end{equation}
+
+It is known that a minimization of the geometric error for a given correspondent pair of points \{x, xi\}. The way to do so would be to minimize the sum of squared distances to find a pair of points \{\^x, \^xi\} subject to the epipolar constraint. However, not enough documentation about OpenCV was found in order to find out if this process is implemented in the applied functions.
 
 
 

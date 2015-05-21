@@ -1,14 +1,20 @@
 %!TEX root = ../report.tex
 \chapter{ROS Nodes Structure} % (fold)
 \label{chap:ros_nodes_structure}
-The ROS nodes structure implemented and its topics is shown in the figure \ref{fig:ros_nodes}. The nodes and their explanation are:
+The ROS nodes structure implemented and its topics are showed in Figure \ref{fig:ros_nodes} and introduced below:
 \begin{enumerate}
-	\item \textbf{Ball tracker}. This node receive image from the camera in its compressed format, extract the same feature in both images and calculate its position in the 3D space. This point is then published. This node is explained in the chapters of $Feature\ extraction$ [\ref{chap:feature_extraction}] and $Stereopsis$ [\ref{chap:stereopsis}].
-	\item \textbf{Kalman filter}. The new point is used to predict its future state based on its position and velocity. This nodes lets the robot keep moving even when the cameras have lost the object. The node is defined in the $Prediction$ chapter [\ref{chap:prediction}].
-	\item \textbf{Path planning}. Once we have the point located in the space, a new robot's configuration is calculated so the robot can keep the object in sight. The node is explained in the chapter $Path\ planning$ [\ref{chap:path_planning}].
-	\item \textbf{Points server}. An auxiliary node has been developed for introduce virtual points in the system so it can be tested in a more modular way.
-	\item \textbf{RobWork Studio plugin}. To improve the visioning of the robot and its movements, a real-time viewer plugin has been developed. This plugin allows the user, not only see the robot in its real configuration, but also the tracked object and other geometries.
-	\item \textbf{Log}. A new log node has been implemented for our task. This nodes get subscribed to the topics to be logged and plots in real time along as generate graphics for future analysis.
+	\item \textbf{Ball tracker}. This node receives images from the stereo rig in compressed format, extracts the 2D position of the marker in both images and reconstructs its position in the 3D space. 
+	The coordinates of the point are then published. The algorithm encoded within this node is broken down in chapters [\ref{chap:feature_extraction}] and [\ref{chap:stereopsis}].
+	\item \textbf{Kalman filter}. The input new point is used here to predict the future state based on the physical model. This node lets the robot keep moving even when the cameras have lost the target. 
+	A detailed explanation of the node tasks can be found in chapter [\ref{chap:prediction}].
+	\item \textbf{Path planning}. Once the point has been located in the three-dimensional space, a new joint configuration subject to some constraints is calculated in order to keep the object tracking the target. 
+	The path planning node is explained in chapter [\ref{chap:path_planning}].
+	\item \textbf{Points server}. An auxiliary node has been developed for providing virtual points to the system in a modular fashion. 
+	It has been employed to perform the simulations prior the use of the workcell and its description can be found in 
+	\item \textbf{RobWork Studio plugin}. To improve the visioning of the robot and its movements, a real-time viewer plugin has been developed for RobWorkStudio. 
+	This plugin enables the real time simulation of the input 3D points in the system and has helped test the algorithm performance off line.
+	\item \textbf{Log}. A new log node has been implemented for our task. 
+	This node subscribes to all the relevant topics in the structure and generate in real time the graphics used for the analysis of the system.
 \end{enumerate}
 
 \begin{figure}[!ht]
