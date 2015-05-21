@@ -2,10 +2,12 @@
 \chapter{Path planning} % (fold)
 \label{chap:path_planning}
 
-In this chapter, the path planning for the robot is presented.
-The first section deals with the path planning problem found in our case. Then, the constrained planning along with the assumptions made are presented. Follows the collision avoidance strategy. In the end, the implementation, the experimental results and the conclusions of this chapter are presented.
+Under this chapter, the path planning and all strategies related to the robot motion are presented.
+The first section deals with the path planning problem for the presented scenario. 
+Then, the constrained planning along with the assumptions made during the approach are detailed. 
+It follows the collision avoidance strategy and in the end, the implementation, the experimental results and the conclusions.
 
-\section{Path planning in keep object in sight} % (fold)
+\section{Path planning for keeping the target in sight} % (fold)
 \label{sec:path_planning_in_keep_object_in_sight}
 The problem treated is keep an object in sight. 
 Due to the nature of the low speed of the object to be tracked, the movement increments that the robot is going to achieve are in the order of centimeters. 
@@ -14,7 +16,7 @@ This, with the low colliding objects in the work cell where the experiment is ca
 
 \section{Constrained planning} % (fold)
 \label{sec:constrained_planning}
-From now the assumption of that the object is being located is taken. 
+From now the assumption of that the object is being located is made. 
 Despite the object tracked is referenced to the camera's frame, in the name of clarity, lets assume that the object tracked is in the world's reference frame. 
 For now, a point in the space is located along with the robot.
 The goal is find a robot configuration that always allows to keep the camera in direction to the tracked object.
@@ -100,7 +102,7 @@ A natural cubic interpolation as shown in the figure \ref{fig:cubic interpolatio
 For each interpolated Q, a single query planner with in the robot's collision free space, is checked. If a future collision is detected the Rapid-exploring Random Tree RRT in its variance RRT-Connect \cite{RRTConnect} is used.\\
 
 This method is an online method to generate random configurations in the collision free space.
-The algorithm used is presented in the listing \ref{lis:rrt_connect_planner} and it defines how from a $q_{init}$ to a $q_{goal}$ \in \ $C_{free}$, a random configuration tree is expanded and connected  until the init reach the goal. The RRT-Connect (see figure \ref{fig:rrt_connect}) is not tunned by a parameter but the random Q's generation is defined by a defined distance and the used metric to defined that distance.
+The algorithm used is presented in the listing \ref{lis:rrt_connect_planner} and it defines how from a $q_{init}$ to a $q_{goal}$ $\in$ \ $C_{free}$, a random configuration tree is expanded and connected  until the init reach the goal. The RRT-Connect (see figure \ref{fig:rrt_connect}) is not tunned by a parameter but the random Q's generation is defined by a defined distance and the used metric to defined that distance.
 
 \begin{lstlisting}[frame=tb, mathescape=true, xleftmargin=.28\textwidth, xrightmargin=.28\textwidth,caption=RRT-Connect Algorithm, label=lis:rrt_connect_planner]
 $\textbf{CONNECT}$($\Gamma$, $q$)
