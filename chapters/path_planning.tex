@@ -83,9 +83,9 @@ This is made applying inverse kinematics. The IK should give a vector of possibl
 
 \section{Path optimization} % (fold)
 \label{sec:path_optimization}
-Due to the speed at which the points are received the incremental movements of the robot tend to be small. Thus, the optimization to be made is really small. However given to Q's an interpolation between them has been made.\\
+Due to the speed at which the points are received, the incremental movements of the robot tend to be small. Thus, there is few room for path optimization. However given two Q's an interpolation between them has been made.\\
 
-An natural cubic interpolation as shown in the figure \ref{fig:cubic interpolation}, is made. The number of interpolated steps can be controlled affecting to the robot so a higher number means more smoothness but more time and less speed, and vice versa.
+A natural cubic interpolation as shown in the figure \ref{fig:cubic interpolation}, is made. The number of interpolated steps can be controlled affecting to the robot so, a higher number means more smoothness but more path time and less speed, and vice versa.
 
 \begin{figure}[!hb]
 	\centering
@@ -97,14 +97,19 @@ An natural cubic interpolation as shown in the figure \ref{fig:cubic interpolati
 
 \section{Collision avoidance} % (fold)
 \label{sec:collision_avoidance}
-For each interpolated Q, the collision with the environment or itself is checked. If a future collision is detected the Rapid-exploring Random Tree RRT in its variance RRT-Connect \cite{RRTConnect} is used.\\
+For each interpolated Q, the robot's collision with the environment or itself is checked. If a future collision is detected the Rapid-exploring Random Tree RRT in its variance RRT-Connect \cite{RRTConnect} is used.\\
 
 This method is an online method to generate random configurations in the collision free space. This is found by generating random configurations that generated at a defined distance ones from others and then tried to join them, generating a mesh of possible no-colliding configuration in the 3D space. A path of configuration can be made from two different nodes by different methods as, for example, A*.
 % section collision_avoidance (end)
 
 \section{Implementation} % (fold)
 \label{sec:implementation}
-
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[height=16cm]{figures/path_planning_flowchart}
+	\caption{Flowchart of the path planning method}
+	\label{fig:path_planning_flowchart}
+\end{figure}
 % section implementation (end)
 
 \section{Experimental results} % (fold)
