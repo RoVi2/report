@@ -104,7 +104,7 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 	\label{sub:contrained_planning_implementation}
 	\subsubsection{X, Y and Z coordinates} % (fold)
 	\label{subsub:x_y_and_z_coordinates}
-	To reduce the degrees of freedom of the problem two assumptions are made:
+	To reduce the degrees of freedom of the problem two constraints are applied:
 	\begin{enumerate}
 		\item The world reference frame is located in the base of the robot.
 		\item The camera will keep a fixed distance in the Z axis from the object.
@@ -122,7 +122,7 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 		\label{eq:pose_polar_coorinates}
 			Pose = [r,\alpha,z,R,P,Y]
 		\end{equation}
-	So transforming the 3D point of the tracked object to cylindrical coordinates we can obtain the desired pose angle $\alpha$ and the radius $r$ from the robot's base axis. 
+	So transforming the 3D point of the tracked object to cylindrical coordinates it can be obtained the desired pose angle $\alpha$ and the radius $r$ from the robot's base axis. 
 	The angle $\alpha$ is the same based on the first assumption and because we want the camera to be in the plane formed by the robot's z base axis and the tracked point. 
 	The radius can be calculated as the actual $r_object$ minus the desired distance to the object. Is minus because we want it in the direction of the robot's base. 
 	So the camera's pose is now defined as:
