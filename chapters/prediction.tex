@@ -105,5 +105,44 @@ P_{k}=(I-K_{k}*H_{k})*P_{k}^{-}
 \label{eq:error_covariance}
 \end{equation}
 
+\subsection{Covariances estimation}
+Kalman filter has some critique points, being one of them having a model close enough to the real system's behavior (it doesn't have to be an exact model though). Another one is giving a good estimation of the process noise covariance matrix ($Q_{k}$) and the measurement noise covariance matrix ($R_{k}$).\\
+
+For computing the measurement noise covariance matrix an experiment was performed. First, the tracked object was kept still in front of the cameras without any human interaction to disturb it. Then, 90 outputs from the balltracker node (chapter \ref{chap:ros_nodes_structure}) are recorded into a file, consisting this points of the relative 3D position of the tracked object to the cameras. Considering that the first measured point is the correct solution\footnote{This assumption is quite brave. However, this covariance matrix is just an approximation of the real one and the algorithm corrects its own covariance matrix on the fly as stated above.}, this value is subtracted from the rest of the measurements leaving then the error. Finally, the covariance of this values is computing, yielding the values in equation \ref{eq:Rk}.
+
+\begin{equation}
+R_{k}=
+\begin{bmatrix}
+0.0003059 & 0.0000698 & -0.0005001 \\
+0.0000698 & 0.0000990 & -0.0000384 \\
+-0.0005001 & -0.0000384 & 0.0009040 \\
+\end{bmatrix}
+\label{eq:Rk}
+\end{equation}
+
+It can be seen that the values of the covariances are rather low, being the highest ones for the z axis, which is the one that requires more computation to be calculated. Having the exact position of the object respect to the camera instead of using the first point as the correct one would probably provide higher error covariances. However, for having that value and external measurement unit reliable enough should be used. \\
+
+On the other hand, computing the process covariance matrix is not such a straightforward process. The reason for this is that the process being measured in this project is an object being randomly moved by a human, which implies sudden changes of direction, shacking of the object while trying to keep it still and some others... Hence, the covariances for this process have to be rather high in comparison with the measurement ones.
+
+Nevertheless, for giving a rough approximation, a setup was prepared. In this one, a human was trying to hold the object still in front of the cameras without any external help. Meanwhile, 157 outputs from the balltracker node were recorded into a file like in the previous setup. Then, the speeds and accelerations are derived from this positions giving the time differences provided by ROS timestamps. If the process was perfect and the human was able to hold the ball perfectly still all the positions would be almost the same (only the measurement error would affect them) and the speeds and accelerations would be 0 in all axis. Therefore, assuming again that the initial position is the correct one, its value is subtracted from the rest of the positions and the covariance matrix of the whole dataset is computed, obtaining the results shown in equation \ref{eq:Qk}.
+
+\begin{equation}
+Q_{k}=
+\resizebox{.8 \textwidth}{!}{$
+\begin{bmatrix}
+0.0003 & 0.0001 & -0.0005 & 0.0000 & -0.0000 & -0.0001 & -0.0000 & 0.0000 & 0.0000 \\
+0.0001 & 0.0001 & -0.0000 & -0.0000 & 0.0000 & 0.0000 & 0.0000 & -0.0000 & -0.0001 \\
+-0.0005 & -0.0000 & 0.0009 & -0.0000 & 0.0001 & 0.0002 & 0.0001 & -0.0001 & -0.0001 \\
+0.0000 & -0.0000 & -0.0000 & 0.0001 & -0.0001 & -0.0003 & 0.0002 & -0.0003 & -0.0008 \\
+-0.0000 & 0.0000 & 0.0001 & -0.0001 & 0.0003 & 0.0004 & -0.0002 & 0.0008 & 0.0012 \\
+-0.0001 & 0.0000 & 0.0002 & -0.0003 & 0.0004 & 0.0011 & -0.0006 & 0.0014 & 0.0035 \\
+-0.0000 & 0.0000 & 0.0001 & 0.0002 & -0.0002 & -0.0006 & 0.0011 & -0.0014 & -0.0046 \\
+0.0000 & -0.0000 & -0.0001 & -0.0003 & 0.0008 & 0.0014 & -0.0014 & 0.0052 & 0.0087 \\
+0.0000 & -0.0001 & -0.0001 & -0.0008 & 0.0012 & 0.0035 & -0.0046 & 0.0087 & 0.0241 \\
+\end{bmatrix}$}
+\label{eq:Qk}
+\end{equation}
+
+As it can be seen in the above matrix, the covariances are not very high values once again. Actually, the values that correspond to the covariances computed for the measurement which are shown in the first 3 columns and rows, are the same as the ones computed in equation \ref{eq:Rk}. Nonetheless, holding the object still just produces some small movements on a local point. For making this approximation more reliable the values are increased one magnitude order so that they become a more accurate representation of the randomness of moving the object freely in front of the cameras.
 
 % chapter prediction (end)
