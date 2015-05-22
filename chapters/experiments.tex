@@ -1,4 +1,34 @@
-\chapter{Experiments} % (fold)
+%!TEX root = ../report.tex
+\chapter{Experiments}
 \label{cha:experiments}
+In order to verify the theory and method whose implementation is described in the previous chapters, a number of experiments are carried out.
 
-% chapter experiments (end)
+The experiments are designed to verify or examine the following properties of the system:
+\begin{itemize}
+    \item The ``true'' PA10 joint configuration versus the desired configuration.
+    \item Correctness of the estimated object 3D position obtained by triangulation. %todo
+    \item The error between the detected object 3D position and the Kalman filter prediction.
+    \item Paths planned around obstacles in the environment.
+\end{itemize}
+
+\section{Mechanical joint play}
+The first experiment to be carried out is to explore whether there is any mechanical play of a particular joint significant enough to be detected by the encoder of that joint.
+The play will have to be larger than the encoder resolution to be detected.
+
+The experiment is carried out be sending a number of desired joint configurations to the PA10 controller and afterwards reading back the resulting configuration as reported by the controller.
+In an optimal system they should be the same.
+
+\section{Precision of object detection}
+Backprojection?
+
+\section{Detected ball position and the Kalman filter prediction}
+To show that the Kalman filter is working as expected,
+predicting the ball position even in cases where the detection algorithm fails, the following experiment is conducted.
+
+The PA10 robot configuration and thus the stereo camera position is kept constant.
+The object to be tracked is then moved slowly inside the view of the cameras. At some point, the object is obscured by moving it behind a piece of cardboard, so that the tracking algorithm no longer succeeds in detecting it.
+That is the point at which the Kalman filter predictions become particularly important to keep track of the object. Especially so in cases where the object would have otherwise moved out of sight of the cameras while obscured.
+
+
+\section{Paths planning around obstacles}
+Simulation only
