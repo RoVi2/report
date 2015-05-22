@@ -7,10 +7,11 @@
 \label{sec:overall_description}
 The present report contains the description of the  project "Path planning for paths that keep
 object in sight" developed as a part of the course RoVi2: Robotics and Computer Vision 2. 
-The aim of the developed system is to enable the existing setup consisting of a PA10 with a tool mounted stereo vision system to safely plan the required three-dimensional trajectories for keeping a specific user-controlled target within the field of view of its cameras at any moment. 
+The aim of the designed system is to enable the existing setup consisting of a PA10 robot with a tool mounted stereo vision rig to safely plan the required three-dimensional trajectories for keeping a specific user-controlled target within the field of view of its cameras at any moment. 
 
 \section{Report structure}
 \label{sec:report_structure}
-The project has been divided into two well differentiated parts. On one side the computer vision part, under which the recognition of the target, its tracking and location and the modeling of its physical behavior are treated. On the other side the robotics part, which gathers all the processes in charge of the trajectory planing and collision detection for the robot.
+The project has been divided into two well differentiated parts. On one side the computer vision part, under which the design of the marker to track and its recognition, the location tasks and the modeling of its physical behavior are treated.
+On the other side the robotics part, which gathers all the processes in charge of the trajectory planing and collision detection for the robot motion.
 
 The report is structured as follows: for better understanding and as guide a the $ROS\ nodes\ structure$ [\ref{chap:ros_nodes_structure}] implemented is presented, continues with $Feature\ extraction$ [\ref{chap:feature_extraction}] and $Stereopsis$ [\ref{chap:stereopsis}]. Then, the Kalman filter is introduced in $Prediction$ [\ref{chap:prediction}] and in $Path\ planning$ [\ref{chap:path_planning}] how the robot moves to keep the object in sight is explained. Finish with the $Experiments$ [\ref{cha:experiments}], the $Discussion$ [\ref{chap:discussion}] and ends up with the $Conclusions$ [\ref{cha:conclusions}]. 
