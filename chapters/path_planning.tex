@@ -177,18 +177,18 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 
 	\subsubsection{Collision detector} % (fold)
 	\label{sub:collision_detector}
-	The collision detector is the strategy used to define when two objects are colliding. Based on our criteria of fast detection and that only simple geometries are found in our work cell, the Yaobi strategy \cite{Yaobi} has ben chosen. Yaobi, as defined in the webpage,  "is a small collision detection library for arbitrary meshes. I was inspired by the excellent libraries PQP and Opcode, and hopefully I have managed to combine the best parts of both: oriented bounding boxes (OBBs) and hybrid tree structure. Like PQP, Yaobi uses an OBB-tree to model objects. PQP takes this representation to its limit, surrounding each triangle with a single leaf-OBB. Yaobi instead uses the hybrid approach of Opcode, where leaf-nodes surround two triangles each (TriNodes). The hybrid approach not only saves a lot of memory, it also makes collision queries run faster. Benchmarks show that Yaobi is between 2.5 to 3 times faster than PQP. For near convex objects, Opcode is slightly faster, but for curved objects and small objects inside larger ones, Yaobi gets the upper hand."
+	The collision detector is the strategy used to define when two objects are colliding. Based on our criteria of fast detection and that only simple geometries are found in our work cell, the Yaobi strategy \cite{Yaobi} has been chosen. Yaobi, is defined as a small collision detection library for arbitrary meshes. It is inspired by the libraries PQP and Opcode, and combines a part of both: oriented bounding boxes (OBBs) and hybrid tree structure. Like PQP, Yaobi uses an OBB-tree to model objects. PQP takes this representation to its limit, surrounding each triangle with a single leaf-OBB. Yaobi instead uses the hybrid approach of Opcode, where leaf-nodes surround two triangles each (TriNodes). The hybrid approach not only saves a lot of memory, it also makes collision queries run faster. Benchmarks show that Yaobi is between 2.5 to 3 times faster than PQP. For near convex objects, Opcode is slightly faster, but for curved objects and small objects inside larger ones, Yaobi gets the upper hand.
 	% subsection collision_detector (end)
 	\subsubsection{Sampler} % (fold)
 	\label{sub:sampler}
-	The sampler defines how the new configurations need to be created in the $C_{free}$. In this case the sampler chosen has been $Uniform$. This is due to the not patterned geometries so, for example, there is no preference in the direction the new configuration are going to be created.
+	The sampler defines how the new configurations need to be created in the $C_{free}$. In this case the sampler chosen has been $Uniform$. This is because of the not patterned geometries so, for example, there is no preference in the direction the new configuration are going to be created.
 	% subsection sampler (end)
 % subsection rrt_connect (end)
 \subsection{Path optimization} % (fold)
 \label{sub:path_optimization_implementation}
-Path optimization some interpolations have been tested. 
-From the Circular Interpolator until the Linear Interpolator, the one with best and smother results has been the Cubic Spline Interpolator in its variance natural spline.
-Due to the robot's speed was fixed and limited, the factor to define the differential step has been the number of divisions made between two robot's configuration. 
+For the path optimization step some interpolation techniques have been tested. 
+From the Circular Interpolator until the Linear Interpolator, the one with best and smoothest results has been the Cubic Spline Interpolator in its natural spline variance.
+Due to the fact that the speed of the robot was limited, the factor to define the differential step has been the number of divisions made between two robot configurations. 
 During this project a number of 4 intermediate Q's has been used.
 % subsection path_optimization (end)
 
@@ -204,11 +204,11 @@ During this project a number of 4 intermediate Q's has been used.
 \label{sec:conclusions_pathplanning}
 A simple query path planning RRT-Connect, with constrained planning and path optimization has been implemented. \\
 
-On one hand, the assumptions taken when calculating the constrained robot's configuration has been proven to be valid for our experiments. 
-Furthermore, the RRT-Connect not only has shown to be valid for the project but also has extend our knowledge in this topic which is inside of the course's scope.
-On the path optimization part, the natural cubic splines have proved to be a good and useful tool when interpolating two Q's, smoothing the robot's movements. \\
+On one hand, the assumptions taken when calculating the constrained robot's configuration generation has been proved to be valid for our experiments. 
+Furthermore, the RRT-Connect not only has showed to be valid for the project but also has extended our knowledge in this topic, which is inside of the scope of this course.
+On the path optimization part, the natural cubic splines have proved to be a good and useful tool when interpolating two Q's, smoothing the robot movements. \\
 
-On the other hand, not only everything has been implemented inside a ROS node and using the RobWork libraries so a further understanding of those has been achieved, but also two auxiliar plugin, the $server point$ and the $Robwork plugin$, has been implemented in parallel so this node could have been tested without depending on the others.
+On the other hand, not only everything has been implemented inside a ROS node and using the RobWork libraries so a further understanding of those has been achieved, but also two auxiliary plugins, the $server point$ and the $Robwork plugin$, has been implemented in parallel so that this node could be tested without depending on the others.
 
 TODO: This is too positive, add some of the experiments conclusions
 % section conclusions (end)
