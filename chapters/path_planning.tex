@@ -2,21 +2,23 @@
 \chapter{Path planning} % (fold)
 \label{chap:path_planning}
 
-In this chapter, the path planning for the robot is presented.
-In the first part the path planning when keeping an object in sight is analyzed [\ref{sec:path_planning}]. Then, the constrained planning [\ref{sec:constrained_planning}] is introduced and follows with the path planning used: RRT-Connect [\ref{sec:path_planning}]. In the end, the implementation [\ref{sec:implementation_pathplanning}], where the constrained planned asumptions and the RRT-Connect parameters are explained, the experimental results [\ref{sec:experimental_results_pathplanning}] and the conclusions [\ref{sec:conclusions_pathplanning}]of this chapter are presented.
+This chapter covers the path planning algorithm for the robot.
+In the first part the trajectory generation process oriented to keep a tarjet in sight is analyzed [\ref{sec:path_planning}]. Then, the constrained planning [\ref{sec:constrained_planning}] is introduced and follows an explanation of the path planner used: RRT-Connect [\ref{sec:path_planning}]. Finally, the implementation [\ref{sec:implementation_pathplanning}], where the constrained planned asumptions and the RRT-Connect parameters are detailed, the experimental results [\ref{sec:experimental_results_pathplanning}] and the conclusions [\ref{sec:conclusions_pathplanning}]of this chapter are presented.
 
-\section{Path planning for keeping the target in sight} % (fold)
+\section{Problem statement} % (fold)
 \label{sec:path_planning_in_keep_object_in_sight}
-The problem treated is keeping an object in sight. 
-Due to the nature of the object's low speed to be tracked, the movement increments that the robot achieved are in the order of centimeters. 
-This, with the low quantity of colliding objects in the work cell where the experiment is carried out, gives as a result to focus mainly in the constrained planning and the path planning used: RRT-Connect.
+The task considered consists in finding a collision-free trajectory between computed robot configurations so that for every given target position, the tool mounted camera can maintain the marker within its field of view. 
+Since the speed of the target has been decided to be kept low for safety reasons, the resulting movement increments of the robot tool are in the order of centimeters. 
+This, together with the low quantity of possible obstacles in the workcell where the experiment is carried out, has let the project focus mainly in the constrained planning generation and the path planner utilized.
 % section path_planning_in_keep_object_in_view (end)
 
 \section{Constrained planning} % (fold)
 \label{sec:constrained_planning}
-<<<<<<< HEAD
-From now the assumption of that the object is being located is made. 
-Despite the object tracked is referenced to the camera's frame, in the name of clarity, lets assume that the object tracked is in the world's reference frame. 
+Hereafter the assumption that the 3D position of the target is reliably provided is made.
+The input 3D point referred to the reference frame of the camera is first of all, 
+
+
+, for the sake of clarity, lets assume that the object tracked is in the world's reference frame. 
 For now, a point in the space is located along with the robot.
 The goal is to find a robot configuration that always allows to keep the camera in direction to the tracked object.
 Thus, the problem is reduced to find a camera's pose that is looking to the object.
@@ -28,19 +30,19 @@ The pose to be found is composed of a vector that defines the position in the sp
 		Pose = [x,y,z,R,P,Y]
 	\end{equation}
 
-Taking some assumptions explained in the implementation part \ref{sub:contrained_planning_implementation}, the camera's pose has been reduced from infinite possibilities to one single solution. 
-Thus, the problem now is to check if this pose is reachable by the robot. 
+Under certain assumptions explained in the implementation part \ref{sub:contrained_planning_implementation}, the camera pose solutions for a given target position have been reduced from infinite possibilities to a single one. 
+Thus, the problem now is to check if the obtained pose is reachable by the robot and yields a collision-free configuration. 
 This is made applying inverse kinematics. 
-With inverse kinematics a vector of possible solutions is found and one have to be chosen. 
-This is the one that is energetically better than the rest. This means, the one who moves less joints.
+From the possible solutions to the IK problem the most suitable one must be chosen.
+The defined one is that which entails the smallest movement of the joints.
 % section constrained_planning (end)
 
 \section{Path planning} % (fold)
 \label{sec:path_planning}
-Once we obtain the desired Q to reach, a single query planner in the robot's collision free space, is used. If a future collision is detected the Rapid-exploring Random Tree RRT in its variance RRT-Connect \cite{RRTConnect} is used (see figure \ref{fig:rrt_connect}).\\
+Once the node computes the desired Q to reach, a single query planner in the configuration space of the robot is used. If the trajectory between initial and goal configurations is detected to be not collision-free, the Rapid-exploring Random Tree RRT in its RRT-Connect variance \cite{RRTConnect} is applied (see figure \ref{fig:rrt_connect}) to find an alternative path.\\
 
-This method is an online method to generate random configurations in the collision free space.
-The algorithm used is presented in the listing \ref{lis:rrt_connect_planner} and it defines how from a $q_{init}$ to a $q_{goal}$ $\in$ \ $C_{free}$, a random configuration tree is expanded and connected  until the init reach the goal. For RRT-Connect to be defined there are some previous factors to be specified. These are: metric, collision detector, sampler and the extension.
+This method is an online algorithm that generates random configurations in the collision free space.
+The algorithm used is presented in the listing \ref{lis:rrt_connect_planner} and it defines how from a $q_{init}$ to a $q_{goal}$ $\in$ \ $C_{free}$, a random configuration tree is expanded and connected  until the init reach the goal. For RRT-Connect to be defined there are some previous factors to be specified. These consist of: metric, collision detector, sampler and the extension.
 
 \begin{lstlisting}[frame=tb, mathescape=true, xleftmargin=.28\textwidth, xrightmargin=.28\textwidth,caption=RRT-Connect Algorithm, label=lis:rrt_connect_planner]
 $\textbf{CONNECT}$($\Gamma$, $q$)
@@ -73,9 +75,9 @@ $\textbf{RRT CONNECT PLANNER}$($q_{init}$,$q_{goal}$)
 
 \section{Path optimization} % (fold)
 \label{sec:path_optimization}
-Due to the speed at which the points are received, the incremental movements of the robot tend to be small. Thus, there is few room for path optimization. However given two Q's an interpolation between them has been made.\\
+Due to the speed at which the points are received, the incremental movements of the robot tend to be small, as said above. Therefore, there is little room for path optimization. However given two Q configurations, an interpolation between them is computed.\\
 
-A natural cubic interpolation as shown in the figure \ref{fig:cubic interpolation}, is made. The number of interpolated steps can be controlled affecting to the robot so, a higher number means more smoothness but more path time and less speed, and vice versa.
+A natural cubic interpolation as the one showed in the figure \ref{fig:cubic interpolation}, is carried out. The number of interpolated steps has to be specified so that a higher number means more smoothness but also more path time and lower speed, and vice versa.
 
 \begin{figure}[!hb]
 	\centering
@@ -87,7 +89,7 @@ A natural cubic interpolation as shown in the figure \ref{fig:cubic interpolatio
 
 \section{Implementation} % (fold)
 \label{sec:implementation_pathplanning}
-In the figure \ref{fig:path_planning_flowchart} is shown the process of this ROS node. The whole node has been developed with the ROS and RobWork libraries, having used the predefined methods already implemented. However some parameters need to be selected.
+In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS node is showed. The whole node has been developed with the ROS and RobWork libraries, having used the predefined methods already implemented. However some parameters need to be selected.
 \begin{figure}[!hb]
 	\centering
 	\includegraphics[height=16cm]{figures/path_planning_flowchart}
@@ -99,14 +101,15 @@ In the figure \ref{fig:path_planning_flowchart} is shown the process of this ROS
 	\label{sub:contrained_planning_implementation}
 	\subsubsection{X, Y and Z coordinates} % (fold)
 	\label{subsub:x_y_and_z_coordinates}
-	To reduce the degrees of freedom of the problem two assumptions are taken:
+	To reduce the degrees of freedom of the problem two assumptions are made:
 	\begin{enumerate}
-		\item The robot's base is located in the World reference frame.
-		\item The camera will be at a fixed distance from the object.
+		\item The world reference frame is located in the base of the robot.
+		\item The camera will keep a fixed distance in the Z axis from the object.
 	\end{enumerate}
-	The explanation for this assumption will be explained later, while the reason for the second is to reduce the problem to a smaller set of solutions. 
-	Now, the possible poses can be expressed as an non-solid sphere around the tracked object.
-	Due to our problem, an always desired position is the one that in which the camera is contained in the plane formed by the robot's z base axis and the tracked point. This reduce the problem from an non-solid sphere to a circle's perimeter as a result from the cut the plane does to the sphere.
+	The reason for the first assumption is explained later, while the argument for the second is to constrain the problem to a smaller set of solutions. 
+	Now, all the possible camera poses lie on the surface of a sphere whose center is the target and whose radius is the specified distance between the camera and the object in Z.
+	In order to minimize and control the robot displacement, the most suitable pose has been determined to be that in which the center of the camera belong to the plane formed by the robot's Z base axis and the tracked point. 
+	This reduces the set of solutions to the circumference resulting of intersecting the defined plane and the sphere.
 	Because of the robot is contained in this pane, makes more probable for inverse kinematics solver to find a future possible configuration.\\
 
 	So based in our assumption of fixed distance, a better way to express the pose is the one that includes the distance to the object as a variable.  
