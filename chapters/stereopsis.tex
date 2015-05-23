@@ -12,7 +12,8 @@ Due to the fact that two vision systems were available on the setup, the first s
 After a slight evaluation of resources the chosen one was the stereo rig, utilized to carry out sparse stereo with a single well-defined point. 
 Thus, the next points contain the steps to compute the position of a point in 3-space given its image in two views and the camera matrices. 
 
-Through the acquired pairs of images, the pixel coordinates of the center of gravity of the target are extracted by the algorithm presented in \ref{chap:feature_extraction}, this has not been the approach adopted here.  and they are used to calculate its 3D coordinates referred to the camera reference frame by means of linear triangulation methods.
+Through the acquired pairs of images, the pixel coordinates of the center of gravity of the target are extracted by the algorithm presented in \ref{chap:feature_extraction}. 
+They are used to calculate its 3D coordinates referred to the camera reference frame by means of linear triangulation methods.
 
 \section{Camera model}
 As a consequence of the need of a defined relation between the image and the object space, the cameras must be used as a mapping. 
@@ -27,14 +28,9 @@ x = P·X
 Since the linearity assumed by this model does not hold due to imperfections in the lens, a distortion model needs to be added to the calculations in order to correct the deviations on the real cameras. 
 The Plumb Bob distortion model, introduced in \cite{Brown} is applied here since it is the one used by ROS.
 
-\subsection{Calibration}
-In order to obtain the intrinsic parameters for the camera model, a stereo calibration process based on the technique presented in \cite{Zhang} has been carried out for both Bumblebee2 1394a cameras by means of a ROS node. 
-
-The node only needs to be provided enough images of a 2D calibration pattern in different positions. 
-It computes the projection of the points on the pattern and solves the resulting equations system in a Least-squares fashion as described in \cite{Hartley}. 
-The output of the node are the camera and projection matrices of the cameras, the set of parameters for the distortion model and the homography for the image rectification. 
-Since the projection matrices will be used for the computation of the fundamental matrix during the triangulation calculus, their quality will heavily influence on the overall performance of the system. 
-Therefore, a special commitment has been applied to this step. 
+\subsection{Camera calibration}
+\label{sec:cam_calib}
+In order to obtain the intrinsic parameters for the camera model, a stereo calibration process based on a 2D pattern has been carried out for both Bumblebee2 1394a cameras by means of a ROS node. The procedure and some basics of it are to be found in \ref{sec:camera_calibration}.
 
 \section{3D Reconstruction}
 In order to compute the depth for a pair of correspondent image points, a suitable triangulation method light but robust enough to be executed on line with sufficient accuracy must be found. 
