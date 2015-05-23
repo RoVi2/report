@@ -1,3 +1,4 @@
+%!TEX root = ../report.tex
 \chapter{Calibration} % (fold)
 \label{cha:calibration}
 
@@ -10,9 +11,23 @@ The calibration pattern used is a laser-printed chessboard.
 During the acquisition of the images, it has been tried to provide the wider possible range of positions and orientations of the pattern in the images in order to supply the maximum and more varied set of points to the algorithm.
 Once the homography between the image plane and the pattern is solved, the more varied the set of projected points is, the better is the estimation of the projection matrix obtained through projection error minimization, as described in \cite{Hartley}. 
 
-Once the process is over, the outputs of the node are the camera and projection matrices of the two cameras, the set of parameters for the distortion model and the homography matrix for the image rectification.
+Once the process is over, the outputs of the node are the camera and projection matrices of the two cameras, the set of parameters for the distortion model and the homography matrix for the image rectification (see figure \ref{fig:undistorsion}).
 Since the projection matrices will be used for the computation of the fundamental matrix during the triangulation calculus, their quality will heavily influence the overall performance of the system. 
 Therefore, a special commitment has been applied to this step. 
+
+	\begin{figure}[!ht]
+		\centering
+		\begin{subfigure}{.49\textwidth}
+		  \centering
+		  \includegraphics[width=0.95\textwidth]{figures/distorted}
+		\end{subfigure}%
+		\begin{subfigure}{.49\textwidth}
+		  \centering
+		  \includegraphics[width=0.95\textwidth]{figures/undistorted}
+		\end{subfigure}
+		\caption{Image before and after apply undistortion}
+		\label{fig:undistorsion}
+	\end{figure}
 
 % section camera_calibration (end)
 
