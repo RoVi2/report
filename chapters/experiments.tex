@@ -49,14 +49,45 @@ The PA10 robot configuration and thus the stereo camera position is kept constan
 The object to be tracked is then moved slowly inside the view of the cameras. At some point, the object is obscured by moving it behind a piece of cardboard, so that the tracking algorithm no longer succeeds in detecting it.
 That is the point at which the Kalman filter predictions become particularly important to keep track of the object. Especially so in cases where the object would have otherwise moved out of sight of the cameras while obscured.
 
-\begin{figure}[htb]
+
+
+\begin{figure}
     \centering
-    \resizebox{\columnwidth}{!}{%
+    \begin{subfigure}[b]{0.49\textwidth}
+        \resizebox{\columnwidth}{!}{%
         \input{figures/ball_kalman_3d_tikz}
-    }
-    \caption{Kalman.}
-    \label{fig:ball_kalman_3d}
+        }
+        \caption{A}
+        \label{fig:ball_kalman_3d}
+    \end{subfigure}~
+    \begin{subfigure}[b]{0.49\textwidth}
+        \resizebox{\columnwidth}{!}{%
+            \input{figures/ball_kalman_error_tikz}
+        }
+        \caption{B}
+        \label{fig:ball_kalman_error}
+    \end{subfigure}
+    \caption{Kalman}
+    \label{fig:kalman_test}
 \end{figure}
+
+% \begin{figure}[htb]
+%     \centering
+%     \resizebox{\columnwidth}{!}{%
+%         \input{figures/ball_kalman_3d_tikz}
+%     }
+%     \caption{Kalman.}
+%     \label{fig:ball_kalman_3d}
+% \end{figure}
+
+% \begin{figure}[htb]
+%     \centering
+%     \resizebox{\columnwidth}{!}{%
+%         \input{figures/ball_kalman_error_tikz}
+%     }
+%     \caption{Err.}
+%     \label{fig:ball_kalman_error_tikz}
+% \end{figure}
 
 \section{Paths planning around obstacles}
 Simulation only
