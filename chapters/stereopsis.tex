@@ -18,7 +18,7 @@ They are used to calculate its 3D coordinates referred to the camera reference f
 \section{Camera model}
 As a consequence of the need of a defined relation between the image and the object space, the cameras must be used as a mapping.
 The mathematical model assumed for the camera is the basic pinhole structure, described in \cite{Hartley}.
-This model defines a linear projection from the 3D world to the image plane, and contains the intrinsic parameters that relates the camera and the image reference frames as showed in equation \eqref{eq:pinhole_model}. Where X represent the homogeneous coordinates of a 3D point and x its projection in the image plane in pixel coordinates.
+This model defines a linear projection from the 3D world to the image plane, and contains the intrinsic parameters that relates the camera and the image reference frames as showed in equation \eqref{eq:pinhole_model}. Where $X$ represent the homogeneous coordinates of a 3D point and x its projection in the image plane in pixel coordinates.
 
 \begin{equation}
 x = P \cdot X
@@ -83,13 +83,11 @@ The presence of noise reduces the problem to the minimization of \eqref{eq:LSM} 
 The LS solution solution is given in equation \eqref{eq:LSM_solution}.
 
 \begin{equation}
-	\centering
 	\lVert \mathbf{AX-e} \rVert
 	\label{eq:LSM}
 \end{equation}
 
 \begin{equation}
-	\centering
 	X = [A^{T}A]^{-1}A^{T}e
 	\label{eq:LSM_solution}
 \end{equation}
