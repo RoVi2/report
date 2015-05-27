@@ -41,10 +41,14 @@ x \\ y \\ z \\ v_{x} \\ v_{y} \\ v_{z} \\ a_{x} \\ a_{y} \\ a_{z}
 \label{eq:motion_mat}
 \end{equation}
 
-On the other hand, the particle filter does not make much sense for this case. The main advantage about this filter is that it can use nonlinear equations \cite{kalman_lectures}, when the equations chosen for describing the target model are linear. In addition, this filter ``gives an approximate solution to an exact model'' while the Kalman filter ``gives an exact solution to an approximate model''. Giving the fact that the Kalman filter is also much faster than the other one, it makes it the best option for this project.
+On the other hand, the particle filter does not make much sense for this case. The main advantage about this filter is that it can use nonlinear equations \cite{kalman_lectures}, when the equations chosen for describing the target model are linear.
+In addition, this filter ``gives an approximate solution to an exact model'' while the Kalman filter ``gives an exact solution to an approximate model''.
+Giving the fact that the Kalman filter is also much faster than the other one, it makes it the best option for this project.
 
 \subsection{The Kalman filter}
-The way the Kalman filter works is by computing an a priori estimate of the state of the object to track \cite{OReilly}, being in the case of this project its 3D position, speed and acceleration. Equation \eqref{eq:prev_state} shows how this estimation is computed from the previous state of the system, where $\bar{x}_{k}$ and $x_{k-1}$ are equivalent to the first term of equation \eqref{eq:motion_mat}, F (transfer matrix) is equivalent to the matrix of equation \eqref{eq:motion_mat} and $w_{k}$ is the process noise. This last variable is usually a random variable associated with random forces that change the state of the system, which in the case of the current problem are quite important as the object to track is constantly being moved randomly by the user. It is assumed that this variable has a normal distribution $N(0,Q_{k})$ for a covariance matrix $Q_{k}$.
+The way the Kalman filter works is by computing an a priori estimate of the state of the object to track \cite{OReilly}, being in the case of this project its 3D position, speed and acceleration. Equation \eqref{eq:prev_state} shows how this estimation is computed from the previous state of the system, where $\bar{x}_{k}$ and $x_{k-1}$ are equivalent to the first term of equation \eqref{eq:motion_mat}, F (transfer matrix) is equivalent to the matrix of equation \eqref{eq:motion_mat} and $w_{k}$ is the process noise.
+This last variable is usually a random variable associated with random forces that change the state of the system, which in the case of the current problem are quite important as the object to track is constantly being moved randomly by the user.
+It is assumed that this variable has a normal distribution $N(0,Q_{k})$ for a covariance matrix $Q_{k}$.
 Finally, matrix B relates the control inputs defined by $u_{k}$ to the state of the system. However, as the system has no control inputs being measured this term can be neglected here.
 
 \begin{equation}
@@ -52,7 +56,11 @@ Finally, matrix B relates the control inputs defined by $u_{k}$ to the state of 
 \label{eq:prev_state}
 \end{equation}
 
-Then, some measurements are made. This can be direct measurements of the state of the system or not. In the case of this project they are not, as the only variables measured by the stereosystem are the x, y and z positions of the object. The relation of these measurements is shown in equation \eqref{eq:measurements}, where $\bar{z}_{k}$ and $H_{k}$ (measurement matrix) are shown in equation \eqref{eq:measurements_mats} and $v_{k}$ is the measurement noise. As in the previous case, this variable is independent from the Kalman algorithm and depends on the noise introduced by the measurement system, the projection error from the stereovision system. As done during the camera calibration and the triangulation, it is  supposed that this variable follows a normal distribution $N(0,R_{k}$, with a covariance matrix $R_{k}$.
+Then, some measurements are made. This can be direct measurements of the state of the system or not.
+In the case of this project they are not, as the only variables measured by the stereosystem are the x, y and z positions of the object.
+The relation of these measurements is shown in equation \eqref{eq:measurements}, where $\bar{z}_{k}$ and $H_{k}$ (measurement matrix) are shown in equation \eqref{eq:measurements_mats} and $v_{k}$ is the measurement noise.
+As in the previous case, this variable is independent from the Kalman algorithm and depends on the noise introduced by the measurement system, the projection error from the stereo vision system.
+As done during the camera calibration and the triangulation, it is  supposed that this variable follows a normal distribution $N(0,R_{k})$, with a covariance matrix $R_{k}$.
 
 \begin{equation}
 \bar{z}_{k}=H_{k} \cdot x_{k}+v_{k}
@@ -80,14 +88,18 @@ H_{k}=
 \label{eq:measurements_mats}
 \end{equation}
 
-With the a priori estimation of the state of the system and the measurements done, what is left is to compute the a priori error covariance \cite{OReilly} based on the transfer matrix, the previous error covariance and $Q_{k}$ (the process covariance). In order to do so, equation \eqref{eq:apriori_covariance} is applied.
+With the a priori estimation of the state of the system and the measurements done, what is left is to compute the a priori error covariance \cite{OReilly} based on the transfer matrix, the previous error covariance and $Q_{k}$ (the process covariance).
+In order to do so, equation \eqref{eq:apriori_covariance} is applied.
 
 \begin{equation}
 \bar{P}_{k}=F \cdot P_{k-1} \cdot F^{T}+Q_{k-1}
 \label{eq:apriori_covariance}
 \end{equation}
 
-Having the a priori error covariance computed, the next step is to calculate the \emph{Kalman gain} or \emph{Bleeding factor} using equation \eqref{eq:kalman_gain}. This matrix establishes how much the estimation of the state can be trusted, given its error covariances. When this matrix has very high values it means that the a priori state prediction is trustworthy and it will be included in the final state prediction. However, if its values are close to 0 it means that this prediction is not that good and the final state prediction will rely mainly in the measurements.
+Having the a priori error covariance computed, the next step is to calculate the \emph{Kalman gain} or \emph{Bleeding factor} using equation \eqref{eq:kalman_gain}.
+This matrix establishes how much the estimation of the state can be trusted, given its error covariances.
+When this matrix has very high values it means that the a priori state prediction is trustworthy and it will be included in the final state prediction.
+However, if its values are close to 0 it means that this prediction is not that good and the final state prediction will rely mainly in the measurements.
 
 \begin{equation}
 K_{k} = \bar{P}_{k} \cdot H_{k}^{T} \cdot (H_{k} \cdot \bar{P}_{k} \cdot H_{k}^{T}+R_{k})
@@ -107,9 +119,14 @@ P_{k}=(I-K_{k} \cdot H_{k}) \cdot \bar{P}_{k}
 \end{equation}
 
 \subsection{Covariances estimation}
-Kalman filter has some critique points, being one of the fact that a very accurate model of the system behavior is required (it does not have to be an exact model though). Another one is estimation of the process noise covariance matrix ($Q_{k}$) and the measurement noise covariance matrix ($R_{k}$).
+Kalman filter has some critique points, being one of the fact that a very accurate model of the system behavior is required (it does not have to be an exact model though).
+Another one is estimation of the process noise covariance matrix ($Q_{k}$) and the measurement noise covariance matrix ($R_{k}$).
 
-For computing the measurement noise covariance matrix an experiment was performed. First, the tracked object was kept still in front of the cameras without any human interaction to disturb it. Then, 90 outputs from the balltracker node (chapter \ref{chap:ros_nodes_structure}) are recorded into a file, consisting this points of the relative 3D position of the tracked object to the cameras. Considering that the first measured point is the correct solution\footnote{This assumption is quite brave. However, this covariance matrix is just an approximation of the real one and the algorithm corrects its own covariance matrix on the fly as stated above.}, this value is subtracted from the rest of the measurements leaving then the error. Finally, the covariance of this values is calculated, yielding the values in equation \eqref{eq:Rk}.
+For computing the measurement noise covariance matrix an experiment was performed. First, the tracked object was kept still in front of the cameras without any human interaction to disturb it.
+Then, 90 outputs from the balltracker node (chapter \ref{chap:ros_nodes_structure}) are recorded into a file, consisting this points of the relative 3D position of the tracked object to the cameras.
+Considering that the first measured point is the correct solution\footnote{This assumption is quite brave.
+However, this covariance matrix is just an approximation of the real one and the algorithm corrects its own covariance matrix on the fly as stated above.}, this value is subtracted from the rest of the measurements leaving then the error.
+Finally, the covariance of this values is calculated, yielding the values in equation \eqref{eq:Rk}.
 
 \begin{equation}
 R_{k}=
@@ -121,11 +138,20 @@ R_{k}=
 \label{eq:Rk}
 \end{equation}
 
-It can be seen that the values of the covariances are rather low, being the highest ones for the z axis, as expected, since it is the most sensitive to errors due to the reconstruction process. Having the exact position of the object with respect to the camera instead of using the first point as the correct one would probably provide higher error covariances. However, for having that value and external measurement unit reliable enough should be used.
+It can be seen that the values of the covariances are rather low, being the highest ones for the z axis, as expected, since it is the most sensitive to errors due to the reconstruction process.
+Having the exact position of the object with respect to the camera instead of using the first point as the correct one would probably provide higher error covariances.
+However, for having that value and external measurement unit reliable enough should be used.
 
-On the other hand, computing the process covariance matrix is not such a straightforward process. The reason for this is that the process being measured in this project is an object being randomly moved by a human, which implies sudden changes of direction, shacking of the object while trying to keep it still and some others... Hence, the covariances for this process have to be rather high in comparison with the measurement ones.
+On the other hand, computing the process covariance matrix is not such a straightforward process.
+The reason for this is that the process being measured in this project is an object being randomly moved by a human, which implies sudden changes of direction, shacking of the object while trying to keep it still and some others...
+Hence, the covariances for this process have to be rather high in comparison with the measurement ones.
 
-Nevertheless, for giving a rough approximation, a setup was prepared. In this one, a human was trying to hold the object still in front of the cameras without any external help. Meanwhile, 157 outputs from the balltracker node were recorded into a file like in the previous setup. Then, the speeds and accelerations are derived from this positions giving the time differences provided by ROS timestamps. If the process was perfect and the human was able to hold the ball perfectly still all the positions would be almost the same (only the measurement error would affect them) and the speeds and accelerations would be 0 in all axis. Therefore, assuming again that the initial position is the correct one, its value is subtracted from the rest of the positions and the covariance matrix of the whole dataset is computed, obtaining the results shown in equation \eqref{eq:Qk}.
+Nevertheless, for giving a rough approximation, a setup was prepared.
+In this one, a human was trying to hold the object still in front of the cameras without any external help.
+Meanwhile, 157 outputs from the balltracker node were recorded into a file like in the previous setup.
+Then, the speeds and accelerations are derived from this positions giving the time differences provided by ROS timestamps.
+If the process was perfect and the human was able to hold the ball perfectly still all the positions would be almost the same (only the measurement error would affect them) and the speeds and accelerations would be 0 in all axis.
+Therefore, assuming again that the initial position is the correct one, its value is subtracted from the rest of the positions and the covariance matrix of the whole dataset is computed, obtaining the results shown in equation \eqref{eq:Qk}.
 
 \begin{equation}
 Q_{k}=
