@@ -5,16 +5,16 @@ In order to verify the theory and method whose implementation is described in th
 
 The experiments are designed to verify or examine the following properties of the system:
 \begin{itemize}
-    \item The ``true'' PA10 joint configuration versus the desired configuration.
-    \item Correctness of the estimated object 3D position obtained by triangulation.
-    \item The difference between the measured object 3D position and the Kalman filter prediction.
-    \item Paths planned around obstacles in the environment.
+    \item The actual PA10 joint configuration versus the desired configuration.
+    \item Correctness of the estimated target 3D position obtained by triangulation. %todo
+    \item The error between the detected target 3D position and the Kalman filter prediction.
+    \item Paths planned for obstacle avoidance in the environment.
 \end{itemize}
 
 
 \section{Joint positional error}\label{sec:joint_error}
 The first experiment to be carried out is to explore whether the PA10 correctly reaches the desired configurations.
-Variation between the true (as reported by the PA10 controller) and desired configurations can easily affect other parts of the system.
+Variations between the true (as reported by the PA10 controller) and desired configurations can easily affect other parts of the system.
 
 The experiment is performed by sending a number of desired joint configurations to the PA10 controller and afterwards reading back the resulting configuration as reported by the controller node. Figure~\ref{fig:q_real_desired} shows the resulting data.
 
@@ -27,13 +27,15 @@ The experiment is performed by sending a number of desired joint configurations 
     \label{fig:q_real_desired}
 \end{figure}
 
-In an optimal system the true and desired configurations should be the same, but here the results show otherwise.
-Sometimes the robot does not adhere to the configuration sent to it, but stops after moving a little bit of the way.
-The problem appears to happen when a desired joint angle is too far from the previous.
-Some small part of the error might be explained by mechanical joint play, but it is much more likely that the PA10 controller is the culprit.
 
-Further probing reveals that this problem is not common to PA10's but the particular one used in this project has an error.
-At the time of writing, no measures have been taken to solve the problem, but one solution could be manually implementing a limit to how much a joint may be moved in one step.
+An optimal performance of the system would yield a minimal or none difference between current and desired configurations. 
+However, the results shows otherwise.
+It can be seen that for big steps between the input and current joint positions the actuators do not behave as intended.
+This loss of the expected path is translated into small disruptions in the robot movements that can be seen when following the target. 
+The mistakes in the behavior can be partially due to errors in the mechanical part, but more likely to constraints in the PA10 controller
+
+Further probing reveals that this problem is not common in PA10 models, but the particular one used in this project has an error.
+At the time of writing, no measures have been taken to solve the problem, but a suggested solution could be manually implement a limit to how much a joint may be moved in on step.
 If the desired move is greater than the limit, the system should split the move into several smaller ones.
 
 
@@ -48,7 +50,7 @@ The PA10 robot configuration and thus the stereo camera position is kept constan
 The object to be tracked -- a ball -- is then moved slowly inside the view of the cameras.
 At some point, the ball is obscured, so that the tracking algorithm no longer succeeds in detecting it.
 That is the point at which the Kalman filter predictions become particularly important to keep track of the ball.
-Especially so in cases where the ball would have otherwise moved out of sight of the cameras while obscured.
+Especially so in cases where the ball would have otherwise moved out of sight of the cameras while occluded.
 
 \begin{figure}[htb]
     \centering
@@ -73,7 +75,7 @@ Especially so in cases where the ball would have otherwise moved out of sight of
 Figure~\ref{fig:kalman_test} shows a 16 second excerpt of positional data gathered by the ball detection algorithm and Kalman filter.
 Figure~\ref{fig:ball_kalman_3d} depicts the 3D positions while \ref{fig:ball_kalman_error} shows the difference between the last measured ball position and Kalman filter estimate. Associated samples (at the same time) are the same color.
 
-At 71 seconds the ball is no longer detected for approximately 3 seconds, so the ``detected'' position remains a constant value. The Kalman filter continues predicting the ball position based on previous samples however. This may be be seen in the graph; the difference between measured ball position and the estimate grows quickly until around 74 seconds, where the ball is once again detected correctly in the camera images.
+At 71 seconds the ball is no longer detected for approximately 3 seconds, so the ``detected'' position remains constant. The Kalman filter continues predicting the ball position based on previous samples however. This may be be seen in the error graph; the difference between detected ball position and the estimate grows quickly until around 74 seconds, where the ball is once again detected correctly in the camera images.
 
 In general, whenever the ball changes direction, velocity or acceleration the error is likely to increase because the Kalman filter is yet uncorrected. If the object to be tracked is not detected, the filter update step is skipped entirely.
 
