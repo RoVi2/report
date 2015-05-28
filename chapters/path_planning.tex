@@ -192,18 +192,4 @@ From the Circular Interpolator until the Linear Interpolator, the one with best 
 Due to the fact that the speed of the robot was limited, the factor to define the differential step has been the number of divisions made between two robot configurations. 
 During this project a number of 4 intermediate Q's has been used.
 % subsection path_optimization (end)
-
-
-% section implementation (end)
-\section{Conclusions} % (fold)
-\label{sec:conclusions_pathplanning}
-A simple query path planning RRT-Connect, with constrained planning and path optimization has been implemented. \\
-
-On one hand, the assumptions made when calculating the constrained robot's configuration generation have been proved to be valid for our experiments. 
-Furthermore, the RRT-Connect not only has showed to be valid for the project but also has extended our knowledge in this topic, which is inside of the scope of this course.
-On the path optimization part, the natural cubic splines have proved to be a good and useful tool when interpolating two Q's, smoothing the robot movements. Everything has been implemented inside a ROS node and using the RobWork libraries so a further understanding of those has been achieved, but also two auxiliary plugins, the $server point$ and the $Robwork plugin$, has been implemented in parallel so that this node could be tested without depending on the others.\\
-
-On the other hand, speed problems have been found making the robot move slow. Also the main problem is in the inverse kinematics solver where a solution is not always found. Despite that the node has shown to be useful and effective.
-% section conclusions (end)
-
 % chapter path_planning (end)
