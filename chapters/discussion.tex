@@ -12,10 +12,15 @@ Undistorted images contain some pixel error, albeit small.
 The ball detection algorithm is not perfect either.
 If, for example, the ball is moved quickly, it becomes blurry in the images and longer appears as a circle.
 If the ball is illuminated that can have a similar effect.
-Even though the detection algorithm still finds the ball, its centre of mass may be imprecise by some pixels.
+Even though the detection algorithm still finds the ball, its center of mass may be imprecise by some pixels.
 The further away from the cameras the ball is, the greater the error becomes.
 The 3D position of the ball is based on the camera calibration and 2D detection, so any errors in the first stage will propagate further down the pipeline.
 
+Regarding the general system's speed, the bottle neck is the \emph{balltracker node}. 
+This node subscribes to the cameras that emit images around 25 frames per second, however, only the node works at 3 Hz. 
+This have been tried to solve with two actions: (1) the node now subscribes to the compressed images instead of the raw image and (2) the node process each callback in different thread doing this node multi threading. 
+This improvements give as a result a frame rate of 5 to 10 Hz, but never a the original 25 Hz that would make the robot answer in a natural way.
+ 
 The robot remains uncalibrated but as long as the error described in Section~\ref{sec:joint_error} prevails, that will certainly be the dominant one. The error is particularly pronounced if the ball is not moved very slowly, forcing large jumps in joint angles. Once the PA10 robot moves as it is supposed to, the robot error might be evaluated more thoroughly.
 
 % For future work the first task would probably be to design a way to work around the problem with setting joint configurations which are too far from the previous. Once that is done, the robot performance can be judged more easily...
