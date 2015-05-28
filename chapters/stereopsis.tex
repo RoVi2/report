@@ -1,24 +1,27 @@
 %!TEX root = ../report.tex
 
-\chapter{Stereovision} % (fold)
+\chapter{Stereo vision} % (fold)
 \label{chap:stereopsis}
 
-\section{Introduction}
-In this section, the solution adopted for the location of the target in the 3D space through the vision system, the reasons that led to this approach, the assumptions made and the obtained results are presented.
-A more detailed explanation of the 2D image processing performed for the target tracking can be found in \ref{chap:feature_extraction}.
+% \section{Introduction}
+In this section we discuss the solution adopted for finding the location of the target in 3D space through the vision system, the reasons that led to this approach, the assumptions made and the obtained results are presented.
+A more detailed explanation of the 2D image processing performed for target tracking can be found in \ref{chap:feature_extraction}.
+The methods described in this section are implemented in the balltracker node.
 
 \section{Stereopsis}
 Due to the fact that two vision systems were available on the setup, the first step was to decide which one to employ and the method to compute disparity.
-After a slight evaluation of resources the chosen one was the stereo rig, utilized to carry out sparse stereo with a single well-defined point.
+After a short evaluation of resources, the chosen one was the stereo rig, utilized to carry out sparse stereo with a single well-defined point.
 Thus, the next points contain the steps to compute the position of a point in 3-space given its image in two views and the camera matrices.
 
 Through the acquired pairs of images, the pixel coordinates of the center of gravity of the target are extracted by the algorithm presented in \ref{chap:feature_extraction}.
 They are used to calculate its 3D coordinates referred to the camera reference frame by means of linear triangulation methods.
 
+The image pairs are synchronized using the ROS message filters approximate sync policy, so that the triangulation will happen with images captured at the same time.
+
 \section{Camera model}
 As a consequence of the need of a defined relation between the image and the object space, the cameras must be used as a mapping.
 The mathematical model assumed for the camera is the basic pinhole structure, described in \cite{Hartley}.
-This model defines a linear projection from the 3D world to the image plane, and contains the intrinsic parameters that relates the camera and the image reference frames as showed in equation \eqref{eq:pinhole_model}. Where $X$ represent the homogeneous coordinates of a 3D point and x its projection in the image plane in pixel coordinates.
+This model defines a linear projection from the 3D world to the image plane, and contains the intrinsic parameters that relates the camera and the image reference frames as showed in equation \eqref{eq:pinhole_model}. Where $X$ represents the homogeneous coordinates of a 3D point and x its projection in the image plane in pixel coordinates.
 
 \begin{equation}
 x = P \cdot X
@@ -31,12 +34,13 @@ The Plumb Bob distortion model, introduced in \cite{Brown} is applied here since
 
 \subsection{Camera calibration}
 \label{sec:cam_calib}
-In order to obtain the intrinsic parameters for the camera model, a stereo calibration process based on a 2D pattern has been carried out for both Bumblebee2 1394a cameras by means of a ROS node. The procedure and some basics of it are to be found in \ref{sec:camera_calibration}.
+In order to obtain the intrinsic parameters for the camera model, a stereo calibration process based on a 2D pattern has been carried out for both Bumblebee2 1394a cameras by means of a ROS node.
+The procedure and some basics of it are to be found in Section~\ref{sec:camera_calibration}.
 
 \section{3D Reconstruction}
 In order to compute the depth for a pair of correspondent image points, a suitable triangulation method light but robust enough to be executed on line with sufficient accuracy must be found.
 The task, trivial in theory, entails certain complexity due to the acquisition errors in the measured image coordinates.
-An immediate, simple approach could consists in back-projecting the correspondent image points, by means of the projection matrices, and finding the 3D point in the space in which they intersect.
+An immediate, simple approach could consist in back-projecting the correspondent image points, by means of the projection matrices, and finding the 3D point in the space in which they intersect.
 However, this procedure is very unlikely to succeed in most of the cases since the image points do not satisfy the epipolar constraint due the errors.
 
 \begin{figure}[h]
@@ -102,8 +106,3 @@ Under this section the approach to the experimentation and the final results obt
 The tests for the overall performance of the triangulation algorithm, together with the 2D detector have been carried out once the robotics part was operative.
 Thus, it has been possible to test the on line triangulation through the analysis of the movement of the robot in relation to the target.
 The idea was to check manually if the triangulation was able to keep the camera pointing to the target and at the specified distance once the path planner was tested and working.
-
-
-
-% section stereopsis (end)
-
