@@ -2,13 +2,13 @@
 \chapter{Discussion}
 \label{chap:discussion}
 On an overall level, the system is working as intended. 
-However, through the pipeline formed by the nodes structure there are several sources of error which have to be compensated for or at least kept in mind.
+However, through the pipeline formed by the nodes structure there are several potential sources of errors which have to be compensated for or at least kept in mind regarding further work.
 
-The tasks carried out through this pipeline could be summarized as a) takes stereo camera images; b) performs object detection in each image; c) reconstructs the original 3D point; d) estimates the true position based on previously measured points and e) avoids obstacles by planning paths around them.
-Some of the main troubling steps on the system flow are discussed below.
+The tasks carried out through this pipeline could be summarized as a) acquisition of the stereo images; b) object detection in each image; c) reconstruction of the original 3D point; d) estimation of the true position based on previously measured points and e) obstacles avoidance by generation of safe paths around them.
+Some of the more troubling steps on the system flow are discussed below.
 
 First the camera calibration is not entirely accurate.
-Undistorted images contain some pixel error, albeit small.
+Undistorted images contain some pixel error that, even though are small, will be increased through the triangulation process.
 
 The ball detection algorithm is not perfect either.
 If, for example, the ball is moved quickly, it becomes blurry in the images and longer appears as a circle.
@@ -17,10 +17,10 @@ Even though the detection algorithm still finds the ball, its center of mass may
 The further away from the cameras the ball is, the greater the error becomes.
 The 3D position of the ball is based on the camera calibration and 2D detection, so any errors in the first stage will propagate further down the pipeline.
 
-Regarding the general system's speed, the bottle neck is the \emph{balltracker node}. 
-This node subscribes to the cameras that emit images around 25 frames per second, however, only the node works at 3 Hz. 
-This have been tried to solve with two actions: (1) the node now subscribes to the compressed images instead of the raw image and (2) the node process each callback in different thread doing this node multi threading. 
-This improvements give as a result a frame rate of 5 to 10 Hz, but never a the original 25 Hz that would make the robot answer in a natural way.
+Regarding the general speed of the system, the bottleneck is the \emph{balltracker node}. 
+This node subscribes to the cameras, which are able to emit images at around 25 frames per second, however, the node only works at 3 Hz. 
+This has been partially solved by two different means: (1) the node was changed to subscribe to the compressed images instead of the raw image and (2) the node processes each callback in a different thread doing this node multi threading. 
+These improvements give as a result an enhanced frame rate of 5 to 10 Hz, but still far from the original 25 Hz that would make the robot perform in a more natural way.
  
 The robot remains uncalibrated but as long as the error described in Section~\ref{sec:joint_error} prevails, that will certainly be the dominant one. The error is particularly pronounced if the ball is not moved very slowly, forcing large jumps in joint angles. Once the PA10 robot moves as it is supposed to, the robot error might be evaluated more thoroughly.
 
