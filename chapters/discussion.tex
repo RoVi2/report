@@ -1,4 +1,21 @@
 %!TEX root = ../report.tex
 \chapter{Discussion}
 \label{chap:discussion}
+On an overall level, the system is working as it should. It does have problems though.
 
+The ROS nodes are stitched together to form a pipeline which a) takes stereo camera images; b) performs object detection in each image; c) reconstructs the original 3D point; d) estimates the true position based on previously measured points and e) avoids obstacles by planning paths around them.
+
+Through the pipeline there are several sources of error which have to be compensated for, or at least kept in mind.
+First the camera calibration is not entirely accurate.
+Undistorted images contain some pixel error, albeit small.
+
+The ball detection algorithm is not perfect either.
+If, for example, the ball is moved quickly, it becomes blurry in the images and longer appears as a circle.
+If the ball is illuminated that can have a similar effect.
+Even though the detection algorithm still finds the ball, its centre of mass may be imprecise by some pixels.
+The further away from the cameras the ball is, the greater the error becomes.
+The 3D position of the ball is based on the camera calibration and 2D detection, so any errors in the first stage will propagate further down the pipeline.
+
+The robot remains uncalibrated but as long as the error described in Section~\ref{sec:joint_error} prevails, that will certainly be the dominant one. The error is particularly pronounced if the ball is not moved very slowly, forcing large jumps in joint angles. Once the PA10 robot moves as it is supposed to, the robot error might be evaluated more thoroughly.
+
+% For future work the first task would probably be to design a way to work around the problem with setting joint configurations which are too far from the previous. Once that is done, the robot performance can be judged more easily...
