@@ -1,22 +1,31 @@
 %---Document Class---%
-\documentclass[12pt]{report}
+\documentclass[12pt,final]{report}
 
 %---Packages---%
-\usepackage[a4paper, margin=1.2in]{geometry} %Document settings 
+\usepackage[a4paper, margin=1.2in]{geometry} %Document settings
 \usepackage{authblk} %Title
-\usepackage{xparse}
 \usepackage{graphicx} %Figures
 
 \usepackage[hidelinks]{hyperref} %Emails in Title
 \usepackage{sectsty} %Change fonts
+\usepackage{tocbibind}
 \usepackage[usenames,dvipsnames]{xcolor} %Colors
 \usepackage{listings} %Code
 \usepackage{amsmath} %Equations
 \usepackage{mathtools} %More equations
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{ifdraft}
+\usepackage{tikz}
+\usepackage{gnuplot-lua-tikz}
+
+% Externalize tikz pictures to speed up compilation if not in "final" mode.
+% Requires pdflatex to be called with -shell-escape.
+\ifoptionfinal{}{%
+	\usetikzlibrary{external}\tikzexternalize
+}
 
 \renewcommand*\rmdefault{lmss} %font
-\usepackage{mathtools}
-\usepackage{amsmath}
 \chapterfont{\color{NavyBlue}}   % sets colour of chapters
  % sets colour of chapters
 \sectionfont{\color{Black}}  % sets colour of sections
@@ -43,4 +52,4 @@
 	\include{chapters/conclusions}
 	\include{chapters/bibliography}
 
-\end{document}          
+\end{document}

@@ -1,4 +1,137 @@
-\chapter{Experiments} % (fold)
+%!TEX root = ../report.tex
+\chapter{Experiments}
 \label{cha:experiments}
+In order to verify the theory and method whose implementation is described in the previous chapters, a number of experiments are performed.
 
-% chapter experiments (end)
+The experiments are designed to verify or examine the following properties of the system:
+\begin{itemize}
+    \item The ``true'' PA10 joint configuration versus the desired configuration.
+    \item Correctness of the estimated object 3D position obtained by triangulation. %todo
+    \item The error between the detected object 3D position and the Kalman filter prediction.
+    \item Paths planned around obstacles in the environment.
+\end{itemize}
+
+
+\section{Joint positional error}
+The first experiment to be carried out is to explore whether the PA10 correctly reaches the desired configurations.
+Variation between the true (as reported by the PA10 controller) and desired configurations can easily affect other parts of the system.
+
+The experiment is performed by sending a number of desired joint configurations to the PA10 controller and afterwards reading back the resulting configuration as reported by the controller node. Figure~\ref{fig:q_real_desired} shows the resulting data.
+
+\begin{figure}[htb]
+    \centering
+    \resizebox{.8\columnwidth}{!}{%
+        \input{figures/q_real_desired_tikz}
+    }
+    \caption{Real configuration as reported by the PA10 controller versus the desired configuration for the first 3 joints.}
+    \label{fig:q_real_desired}
+\end{figure}
+
+In an optimal system the true and desired configurations should be the same, but here the results show otherwise.
+Sometimes the robot does not adhere to the configuration sent to it, but stops after moving a little bit of the way.
+The problem appears to happen when a desired joint angle is too far from the previous.
+Some small part of the error might be explained by mechanical joint play, but it is much more likely that the PA10 controller is the culprit.
+
+Further probing reveals that this problem is not common to PA10's but the particular one used in this project has an error.
+At the time of writing, no measures have been taken to solve the problem, but one solution could be manually implementing a limit to how much a joint may be moved in on step.
+If the desired move is greater than the limit, the system should split the move into several smaller ones.
+
+
+% At the time of writing, the reason for the joint positional error is yet undetermined.
+
+% Variation between the true and desired configuration might be caused by mechanical play of a particular joint.
+% The play will have to be larger than the encoder resolution to be detected and thus significant.
+
+
+\section{Precision of object detection}
+Backprojection?
+
+
+\section{Detected object position and Kalman filter estimate}
+To show that the Kalman filter is working as expected, predicting the ball position even in cases where the detection algorithm fails momentarily, the following experiment is conducted.
+
+The PA10 robot configuration and thus the camera position is kept constant.
+The object to be tracked -- a ball -- is then moved slowly inside the view of the cameras.
+At some point, the ball is obscured, so that the tracking algorithm no longer succeeds in detecting it.
+That is the point at which the Kalman filter predictions become particularly important to keep track of the ball.
+Especially so in cases where the ball would have otherwise moved out of sight of the cameras while obscured.
+
+\begin{figure}[htb]
+    \centering
+    \begin{subfigure}[b]{0.49\textwidth}
+        \resizebox{\columnwidth}{!}{%
+            \input{figures/ball_kalman_3d_tikz}
+        }
+        \caption{Detected path of the ball and Kalman estimate.}
+        \label{fig:ball_kalman_3d}
+    \end{subfigure}~
+    \begin{subfigure}[b]{0.49\textwidth}
+        \resizebox{\columnwidth}{!}{%
+            \input{figures/ball_kalman_error_tikz}
+        }
+        \caption{Positional difference between detected ball position and Kalman estimate.}
+        \label{fig:ball_kalman_error}
+    \end{subfigure}
+    \caption{Detected ball positions and associated Kalman filter estimates.}
+    \label{fig:kalman_test}
+\end{figure}
+
+Figure~\ref{fig:kalman_test} shows a 16 second extract of positional data gathered by the ball detection algorithm and Kalman filter.
+Figure~\ref{fig:ball_kalman_3d} depicts the 3D positions while \ref{fig:ball_kalman_error} shows the difference between the last detected ball position and Kalman filter estimate. Associated measurements (at the same time) are the same color.
+
+At 71 seconds the ball is no longer detected for approximately 3 seconds, so the ``detected'' position remains constant. The Kalman filter continues predicting the ball position based on previous samples however. This may be be seen in the error graph; the difference between detected ball position and the estimate grows quickly until around 74 seconds, where the ball is once again detected correctly in the camera images.
+
+In general, whenever the ball changes direction, velocity or acceleration the error will increase because the Kalman filter is yet uncorrected. If the tracked object is not detected, the filter update step is skipped entirely.
+
+
+\section{Paths planning around obstacles}
+Simulation only
+
+
+
+% \begin{figure}[htb]
+%     \centering
+%     \resizebox{\columnwidth}{!}{%
+%         \input{figures/ball_kalman_3d_tikz}
+%     }
+%     \caption{Kalman.}
+%     \label{fig:ball_kalman_3d}
+% \end{figure}
+
+% \begin{figure}[htb]
+%     \centering
+%     \resizebox{\columnwidth}{!}{%
+%         \input{figures/ball_kalman_error_tikz}
+%     }
+%     \caption{Err.}
+%     \label{fig:ball_kalman_error_tikz}
+% \end{figure}
+
+% \begin{figure}[htb]
+%     \centering
+%     \begin{subfigure}[b]{0.49\textwidth}
+%         \resizebox{\columnwidth}{!}{%
+%             \input{figures/q_real_desired_tikz}
+%         }
+%         \caption{Real configuration as reported by the PA10 controller versus the desired configuration for the first 3 joints.}
+%         \label{fig:q_real_desired}
+%     \end{subfigure}~
+%     \begin{subfigure}[b]{0.49\textwidth}
+%         \resizebox{\columnwidth}{!}{%
+%             \input{figures/q_real_desired_2_tikz}
+%         }
+%         \caption{Real configuration as reported by the PA10 controller versus the desired configuration for the first 3 joints.}
+%         \label{fig:q_real_desired_2}
+%     \end{subfigure}
+%     \caption{asdf}
+%     \label{fig:asdf}
+% \end{figure}
+
+% \begin{figure}[htb]
+%     \centering
+%     \resizebox{\columnwidth}{!}{%
+%         \input{figures/q_real_desired_2_tikz}
+%     }
+%     \caption{Real configuration as reported by the PA10 controller versus the desired configuration for the first 3 joints.}
+%     \label{fig:q_real_desired_2}
+% \end{figure}
