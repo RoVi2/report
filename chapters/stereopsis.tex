@@ -12,7 +12,7 @@ Due to the fact that two vision systems were available on the setup, the first s
 After a slight evaluation of resources the chosen one was the stereo rig, utilized to carry out sparse stereo with a single well-defined point. 
 Thus, the next points contain the steps to compute the position of a point in 3-space given its image in two views and the camera matrices. 
 
-Through the acquired pairs of images, the pixel coordinates of the center of gravity of the target are extracted by the algorithm presented in \ref{chap:feature_extraction}, this has not been the approach adopted here.  and they are used to calculate its 3D coordinates referred to the camera reference frame by means of linear triangulation methods.
+Through the acquired pairs of images, the pixel coordinates of the center of gravity of the target are extracted by the algorithm presented in \ref{chap:feature_extraction}. They are used to calculate its 3D coordinates referred to the camera reference frame by means of linear triangulation methods.
 
 \section{Camera model}
 As a consequence of the need of a defined relation between the image and the object space, the cameras must be used as a mapping. 
@@ -32,14 +32,14 @@ In order to obtain the intrinsic parameters for the camera model, a stereo calib
 
 The node only needs to be provided enough images of a 2D calibration pattern in different positions. 
 It computes the projection of the points on the pattern and solves the resulting equations system in a Least-squares fashion as described in \cite{Hartley}. 
-The output of the node are the camera and projection matrices of the cameras, the set of parameters for the distortion model and the homography for the image rectification. 
+The outputs of the node are the camera and projection matrices of the cameras, the set of parameters for the distortion model and the homography for the image rectification. 
 Since the projection matrices will be used for the computation of the fundamental matrix during the triangulation calculus, their quality will heavily influence on the overall performance of the system. 
 Therefore, a special commitment has been applied to this step. 
 
 \section{3D Reconstruction}
 In order to compute the depth for a pair of correspondent image points, a suitable triangulation method light but robust enough to be executed on line with sufficient accuracy must be found. 
 The task, trivial in theory, entails certain complexity due to the acquisition errors in the measured image coordinates. 
-An immediate, simple approach could consists in back-projecting the correspondent image points, by means of the projection matrices, and finding the 3D point in the space in which they intersect. 
+An immediate, simple approach could consist in back-projecting the correspondent image points, by means of the projection matrices, and finding the 3D point in the space in which they intersect. 
 However, this procedure is very unlikely to succeed in most of the cases since the image points do not satisfy the epipolar constraint due the errors.
 
 \begin{figure}[h]
@@ -51,12 +51,11 @@ However, this procedure is very unlikely to succeed in most of the cases since t
 
 This is because in most of the cases the rays will not intersect in the 3D point, since there is not a point X that satisfies the equations \ref{eq:projection}. 
 
-\begin{equation}
-	\centering
-	x  = P·X  $$\\
-	x' = P'X $$
+\begin{align}
+	x  = P·X \nonumber \\
+	x^{'} = P^{'}·X
 	\label{eq:projection}
-\end{equation} 
+\end{align} 
 
 \subsection{Triangulation}
 The applied method to estimate depth and compute the estimations of 3D positions is the defined for the OpenCV functions utilized in the developed algorithm. 
@@ -103,7 +102,7 @@ It is known that a minimization of the geometric error for a given correspondent
 \section{Experiments}
 Under this section the approach to the experimentation and the final results obtained are to be found.
 The tests for the overall performance of the triangulation algorithm, together with the 2D detector have been carried out once the robotics part was operative. 
-Thus, it has been possible to test the on line triangulation through the analysis of the movement of the robot in relation to the target. 
+Thus, it has been possible to test the online triangulation through the analysis of the movement of the robot in relation to the target. 
 The idea was to check manually if the triangulation was able to keep the camera pointing to the target and at the specified distance once the path planner was tested and working.
 
 
