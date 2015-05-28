@@ -14,8 +14,15 @@
 \usepackage{mathtools} %More equations
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{ifdraft}
 \usepackage{tikz}
 \usepackage{gnuplot-lua-tikz}
+
+% Externalize tikz pictures to speed up compilation if not in "final" mode.
+% Requires pdflatex to be called with -shell-escape.
+\ifoptionfinal{}{%
+	\usetikzlibrary{external}\tikzexternalize
+}
 
 \renewcommand*\rmdefault{lmss} %font
 \chapterfont{\color{NavyBlue}}   % sets colour of chapters
