@@ -1,6 +1,6 @@
 \begin{abstract}
 A workcell consisting of a PA10 robot with a tool mounted stereo rig and surrounded by walls has been programmed to perform three-dimensional path generation for keeping a target inside the field of view of the cameras. 
-The resulting algorithm, created and implemented in ROS, is composed of a nodes structure whose inputs are the pairs of images acquired by the cameras and that outputs the robot joint configurations required to safely follow the target.
+The resulting algorithm, created and implemented in ROS, is composed of a structure of nodes whose inputs are the pairs of images acquired by the cameras and that outputs the robot joint configurations required to safely follow the target.
 In the vision side, the target detection in both rectified images is carried out, leading to a triangulation process in which the 3D position of the target is accurately extracted with respect to the stereo rig.
 The extracted coordinates are after used to compute the future position of the target based on its physical model by means of a Kalman filter. 
 Once obtained, both positions are utilized in the robotics side of the project to carry out the path planning.
@@ -8,7 +8,7 @@ The desired, collision-free position of the camera rig is computed from the targ
 Before executing the displacement, a collision detector and a path optimizer algorithms are employed. 
 However, if the straight line trajectory contains obstacles, an RRT-planner finds a safe different path between configurations.\\
 The system has been successfully tested in both simulation and the workcell, and subjected to experiments to measure the magnitude of the errors in the performance. 
-It has proved robustness and reliability, although certain limits imposed by the robot conditions constrained the goodness of the final results.
+It has proved robustness and reliability, although certain limits imposed by the robot conditions have constrained the goodness of the final results.
 
 
 
