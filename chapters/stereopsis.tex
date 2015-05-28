@@ -18,7 +18,7 @@ They are used to calculate its 3D coordinates referred to the camera reference f
 \section{Camera model}
 As a consequence of the need of a defined relation between the image and the object space, the cameras must be used as a mapping.
 The mathematical model assumed for the camera is the basic pinhole structure, described in \cite{Hartley}.
-This model defines a linear projection from the 3D world to the image plane, and contains the intrinsic parameters that relates the camera and the image reference frames as showed in equation \eqref{eq:pinhole_model}. Where $X$ represent the homogeneous coordinates of a 3D point and x its projection in the image plane in pixel coordinates.
+This model defines a linear projection from the 3D world to the image plane, and contains the intrinsic parameters that relates the camera and the image reference frames as showed in equation \eqref{eq:pinhole_model}. Where $X$ represents the homogeneous coordinates of a 3D point and x its projection in the image plane in pixel coordinates.
 
 \begin{equation}
 x = P \cdot X
@@ -36,7 +36,7 @@ In order to obtain the intrinsic parameters for the camera model, a stereo calib
 \section{3D Reconstruction}
 In order to compute the depth for a pair of correspondent image points, a suitable triangulation method light but robust enough to be executed on line with sufficient accuracy must be found.
 The task, trivial in theory, entails certain complexity due to the acquisition errors in the measured image coordinates.
-An immediate, simple approach could consists in back-projecting the correspondent image points, by means of the projection matrices, and finding the 3D point in the space in which they intersect.
+An immediate, simple approach could consist in back-projecting the correspondent image points, by means of the projection matrices, and finding the 3D point in the space in which they intersect.
 However, this procedure is very unlikely to succeed in most of the cases since the image points do not satisfy the epipolar constraint due the errors.
 
 \begin{figure}[h]

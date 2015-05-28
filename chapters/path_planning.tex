@@ -18,7 +18,7 @@ The input 3D point, that represents the tracked object, referred to the referenc
 
 The goal is to find a robot configuration that always allows to keep the camera pointing to the tracked object.
 Thus, the problem is reduced to find a camera pose that is looking to the object.
-This is not trivial due to there are infinite solutions as is going to be shown. In the figure \ref{fig:camera_pose_example} an example of a camera pose can be found.\\
+This is not trivial due to the fact that there are infinite solutions as it is going to be shown. In the figure \ref{fig:camera_pose_example} an example of a camera pose can be found.\\
 
 The pose to be found is composed of a vector that defines the position in the space, this is the $x$, $y$ and $z$ coordinates, and the orientation matrix what, in order to clarify the concept, lets assume that this matrix is expressed in the Euler Angles with RPY.So the unknowns of the problem are expressed in a vector of 6 components being this:
 
@@ -116,14 +116,14 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 
 	So based on the assumption of fixed distance between the target and the camera, a better way to express its pose would be one which includes this distance as a variable.  
 	This means that a distance that allows to keep the tracked object far enough to have its whole shape in the image, but close enough for a valid triangulation, must be defined.
-	For this reason, the 3D point then is expresed in the robot's base frame and then translated to cylindrical coordinates. So the pose vector from \ref{eq:pose_cartesian_coordinates}, now is expressed as shown in \ref{eq:pose_polar_coorinates};
+	For this reason, the 3D point is then expresed in the robot's base frame and then translated to cylindrical coordinates. So the pose vector from \ref{eq:pose_cartesian_coordinates}, now is expressed as shown in \ref{eq:pose_polar_coorinates};
 		\begin{equation}
 		\label{eq:pose_polar_coorinates}
 			Pose = [r,\alpha,z,R,P,Y]
 		\end{equation}
 	So transforming the 3D point of the tracked object to cylindrical coordinates it can be obtained the desired pose angle $\alpha$ and the radius $r$ from the robot's base axis. 
-	The angle $\alpha$ is the same based on the first assumption and because we want the camera to be in the plane formed by the robot's z base axis and the tracked point. 
-	The radius can be calculated as the actual $r_object$ minus the desired distance to the object. Is minus because we want it in the direction of the robot's base. 
+	The angle $\alpha$ is the same based on the first assumption and because the camera is wanted to be in the plane formed by the robot's z base axis and the tracked point. 
+	The radius can be calculated as the actual $r_{object}$ minus the desired distance to the object. It is minus because it is wanted to be kept in the direction of the robot's base. 
 	So the camera's pose is now defined as:
 		\begin{equation}
 		\label{eq:cameras_pose_noRPY_noZ}
@@ -152,7 +152,7 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 
 	So, regarding the the pitch (P) and the yaw (Y), their value is zero (parallel), and respect to the roll (R) -angle over the z axis- it should be only the offset the user wants to apply. 
 	In our case, as the robot was changed, the robot's base was not aligned with the table, so an offset of 25 degrees was added.
-	This offset can also include the angled previously calculated so the camera will always point to the object and being aligned with the robot's base axis.
+	This offset can also include the angle previously calculated so the camera will always point to the object and being aligned with the robot's base axis.
 
 		\begin{equation}
 			\label{eq:cameras_pose}
@@ -173,7 +173,7 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 
 	\subsubsection{Extension} % (fold)
 	\label{sub:extension}
-	The extension is the distance from which another configuration in consider as a neighbor. This distance depends on how the metrics has been defined.
+	The extension is the distance from which another configuration is considered as a neighbor. This distance depends on how the metrics have been defined.
 	% subsection extension (end)
 
 	\subsubsection{Collision detector} % (fold)
@@ -182,7 +182,7 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 	% subsection collision_detector (end)
 	\subsubsection{Sampler} % (fold)
 	\label{sub:sampler}
-	The sampler defines how the new configurations need to be created in the $C_{free}$. In this case the sampler chosen has been $Uniform$. This is because of the not patterned geometries so, for example, there is no preference in the direction the new configuration are going to be created.
+	The sampler defines how the new configurations need to be created in the $C_{free}$. In this case the sampler chosen has been $Uniform$. This is because of the not patterned geometries so, for example, there is no preference in the direction the new configuration is going to be created.
 	% subsection sampler (end)
 % subsection rrt_connect (end)
 \subsection{Path optimization} % (fold)
@@ -199,11 +199,11 @@ During this project a number of 4 intermediate Q's has been used.
 \label{sec:conclusions_pathplanning}
 A simple query path planning RRT-Connect, with constrained planning and path optimization has been implemented. \\
 
-On one hand, the assumptions taken when calculating the constrained robot's configuration generation has been proved to be valid for our experiments. 
+On one hand, the assumptions made when calculating the constrained robot's configuration generation have been proved to be valid for our experiments. 
 Furthermore, the RRT-Connect not only has showed to be valid for the project but also has extended our knowledge in this topic, which is inside of the scope of this course.
 On the path optimization part, the natural cubic splines have proved to be a good and useful tool when interpolating two Q's, smoothing the robot movements. Everything has been implemented inside a ROS node and using the RobWork libraries so a further understanding of those has been achieved, but also two auxiliary plugins, the $server point$ and the $Robwork plugin$, has been implemented in parallel so that this node could be tested without depending on the others.\\
 
-On the other hand, speed problems have been found making the robot move slow. Also the main problem is in the inverse kinematics solver where a solution is not always found. Despite that the node have shown to be useful and effective.
+On the other hand, speed problems have been found making the robot move slow. Also the main problem is in the inverse kinematics solver where a solution is not always found. Despite that the node has shown to be useful and effective.
 % section conclusions (end)
 
 % chapter path_planning (end)
