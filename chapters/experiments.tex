@@ -27,12 +27,17 @@ The experiment is performed by sending a number of desired joint configurations 
     \label{fig:q_real_desired}
 \end{figure}
 
-
 In an optimal system the true and desired configurations should be the same, but here the results show otherwise.
 Sometimes the robot does not adhere to the configuration sent to it, but stops after moving a little bit of the way.
+The problem appears to happen when a desired joint angle is too far from the previous.
+Some small part of the error might be explained by mechanical joint play, but it is much more likely that the PA10 controller is the culprit.
 
-Some small part of the error might be explained by mechanical joint play, but at times the variation is too large to be only that.
-At the time of writing, the reason for the joint positional error is yet undetermined.
+Further probing reveals that this problem is not common to PA10's but the particular one used in this project has an error.
+At the time of writing, no measures have been taken to solve the problem, but one solution could be manually implementing a limit to how much a joint may be moved in on step.
+If the desired move is greater than the limit, the system should split the move into several smaller ones.
+
+
+% At the time of writing, the reason for the joint positional error is yet undetermined.
 
 % Variation between the true and desired configuration might be caused by mechanical play of a particular joint.
 % The play will have to be larger than the encoder resolution to be detected and thus significant.
