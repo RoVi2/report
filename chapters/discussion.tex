@@ -1,11 +1,12 @@
 %!TEX root = ../report.tex
 \chapter{Discussion}
 \label{chap:discussion}
-On an overall level, the system is working as it should. It does have problems though.
+On an overall level, the system is working as intended. 
+However, through the pipeline formed by the nodes structure there are several sources of error which have to be compensated for or at least kept in mind.
 
-The ROS nodes are stitched together to form a pipeline which a) takes stereo camera images; b) performs object detection in each image; c) reconstructs the original 3D point; d) estimates the true position based on previously measured points and e) avoids obstacles by planning paths around them.
+The tasks carried out through this pipeline could be summarized as a) takes stereo camera images; b) performs object detection in each image; c) reconstructs the original 3D point; d) estimates the true position based on previously measured points and e) avoids obstacles by planning paths around them.
+Some of the main troubling steps on the system flow are discussed below.
 
-Through the pipeline there are several sources of error which have to be compensated for, or at least kept in mind.
 First the camera calibration is not entirely accurate.
 Undistorted images contain some pixel error, albeit small.
 
