@@ -21,10 +21,24 @@ What is more, the ball itself is not a repetitive structure, so that it does not
 \subsection{Image processing}
 To achieve a reliable detection of the target in both images it was decided to use the contours finder provided by OpenCV.
 The necessary binary images input to the finder, according to \cite{suzuki}, are obtained thresholding in HSV.
-This is due to the fact that it turned out that the target color is easier to define in HSV than RGB, so that a robust, light invariant threshold can be computed and applied.
-However, this process yields some artifacts in the image which need to be removed for the contour finder not to detect too many unnecessary contours. \\
+This is due to the fact that it turned out that the target color is easier to define in HSV than RGB, so that a robust, light invariant threshold can be computed and applied. The resulting image can be seen in figure \ref{fig:binary_image}.
+However, this process yields some artifacts in the image which need to be removed for the contour finder not to detect too many unnecessary contours.
 
-To filter out these artifacts two morphological operators are applied. First of all an opening operation with a square kernel of 9x9 pixels which removes the small blobs spread across the image and keeps the target intact. After, a closing operation is performed with the same kernel. The aim of this step is reducing the size of the gaps that appear inside the target after the thresholding in order to get a solid object.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/binary.png}
+    \caption{Binary image obtained after applying color threshold}
+    \label{fig:binary_image}
+\end{figure}
+
+To filter out these artifacts two morphological operators are applied. First of all an opening operation with a square kernel of 9x9 pixels which removes the small blobs spread across the image and keeps the target intact. After, a closing operation is performed with the same kernel. The aim of this step is reducing the size of the gaps that appear inside the target after the thresholding in order to get a solid object. The result of the process can be seen in figure \ref{fig:filtered_image}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/filtered.png}
+    \caption{Binary image obtained after applying the morphological operations}
+    \label{fig:filtered_image}
+\end{figure}
 
 After removing the smallest objects from the binary image and closed the gaps in the remaining ones the finding contours function is applied, obtaining an array with the detected contours. Following, the area and the outer perimeter of all the contours are computed. With these values, a radius threshold, $r_\mathrm{threshold}$, is applied so that only the contours with enough radius are accepted. To do so, the equations for the perimeter and the area of a circumference are applied as it can be seen in equations \ref{eq:circ_perimeter} and \ref{eq:circ_area}.
 
