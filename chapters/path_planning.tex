@@ -3,12 +3,12 @@
 \label{chap:path_planning}
 
 This chapter covers the path planning algorithm for the robot.
-In the first part the trajectory generation process oriented to keep a tarjet in sight is analyzed [\ref{sec:path_planning}]. Then, the constrained planning [\ref{sec:constrained_planning}] is introduced and follows an explanation of the path planner used: RRT-Connect [\ref{sec:path_planning}]. Finally, the implementation [\ref{sec:implementation_pathplanning}], where the constrained planned assumptions and the RRT-Connect parameters are detailed and the conclusions [\ref{sec:conclusions_pathplanning}] of this chapter are presented.
-\section{Problem statement} % (fold)
+In the first part the trajectory generation process oriented to keep a target in sight is analyzed \ref{sec:path_planning}. Then, the constrained planning \ref{sec:constrained_planning} is introduced and follows an explanation of the path planner used: RRT-Connect \ref{sec:path_planning}. Finally, the implementation \ref{sec:implementation_pathplanning}, where the constrained planned assumptions and the RRT-Connect parameters are detailed and the conclusions  of this chapter are presented.
+\section{Problem statement} % [\ref{sec:conclusions_pathplanning}]
 \label{sec:path_planning_in_keep_object_in_sight}
-The task considered consists in finding a collision-free trajectory between computed robot configurations so that for every given target position, the tool mounted camera can maintain the marker within its field of view. 
-Since the speed of the target has been decided to be kept low for safety reasons, the resulting movement increments of the robot tool are in the order of centimeters. 
-This, together with the low quantity of possible obstacles in the workcell where the experiment is carried out, has let the project focus mainly in the constrained planning generation and the path planner utilized.
+The task considered consists in finding a collision-free trajectory between computed robot configurations so that for every given target position, the tool mounted camera can maintain the marker within its field of view.
+Since the speed of the target has been decided to be kept low for safety reasons, the resulting movement increments of the robot tool are in the order of centimeters.
+This, together with the low quantity of possible obstacles in the work cell where the experiment is carried out, has let the project focus mainly in the constrained planning generation and the path planner utilized.
 % section path_planning_in_keep_object_in_view (end)
 
 \section{Constrained planning} % (fold)
@@ -18,40 +18,39 @@ The input 3D point, that represents the tracked object, referred to the referenc
 
 The goal is to find a robot configuration that always allows to keep the camera pointing to the tracked object.
 Thus, the problem is reduced to find a camera pose that is looking to the object.
-This is not trivial due to the fact that there are infinite solutions as it is going to be shown. In the figure \ref{fig:camera_pose_example} an example of a camera pose can be found.\\
+This is not trivial due to the fact that there are infinite solutions as it is going to be shown. In Figure \ref{fig:camera_pose_example} an example of a camera pose can be found.
 
 The pose to be found is composed of a vector that defines the position in the space, this is the $x$, $y$ and $z$ coordinates, and the orientation matrix what, in order to clarify the concept, lets assume that this matrix is expressed in the Euler Angles with RPY.So the unknowns of the problem are expressed in a vector of 6 components being this:
 
-	\begin{equation}
-	\label{eq:pose_cartesian_coordinates}
-		Pose = [x,y,z,R,P,Y]
-	\end{equation}
+\begin{equation}
+\label{eq:pose_cartesian_coordinates}
+	\mathrm{Pose} = [x,y,z,R,P,Y]
+\end{equation}
 
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=0.75\textwidth]{figures/camera_pose_example}
+	\caption{Example of a camera pose where there its reference frame is shown}
+	\label{fig:camera_pose_example}
+\end{figure}
 
-	\begin{figure}[!ht]
-		\centering
-		\includegraphics[width=0.75\textwidth]{figures/camera_pose_example}
-		\caption{Example of a camera pose where there its reference frame is shown}
-		\label{fig:camera_pose_example}
-	\end{figure}
-	
-Under certain assumptions, detailed in the implementation part \ref{sub:contrained_planning_implementation}, the camera pose solutions for a given target position have been reduced from infinite possibilities to a single one. 
-Thus, the problem now is to check if the obtained pose is reachable by the robot and yields a collision-free configuration. 
-This is made applying inverse kinematics. 
+Under certain assumptions, detailed in the implementation part \ref{sub:contrained_planning_implementation}, the camera pose solutions for a given target position have been reduced from infinite possibilities to a single one.
+Thus, the problem now is to check if the obtained pose is reachable by the robot and yields a collision-free configuration.
+This is made applying inverse kinematics.
 From the possible solutions to the IK problem the most suitable one must be chosen.
 The defined one is that which entails the smallest movement of the joints.
 % section constrained_planning (end)
 
 \section{Path planning} % (fold)
 \label{sec:path_planning}
-Once the node computes the desired Q to reach, a single query planner in the configuration space of the robot is used. If the trajectory between initial and goal configurations is detected to be not collision-free, the Rapid-exploring Random Tree RRT in its RRT-Connect variance \cite{RRTConnect} is applied to find an alternative path (see figure \ref{fig:rrt_connect}).\\
+Once the node computes the desired Q to reach, a single query planner in the configuration space of the robot is used. If the trajectory between initial and goal configurations is detected to be not collision-free, the Rapid-exploring Random Tree RRT in its RRT-Connect variance \cite{RRTConnect} is applied to find an alternative path (see Figure \ref{fig:rrt_connect}).
 
 The RRT-Connect is an online algorithm that generates random configurations in the collision free space.
-The algorithm used is presented in the listing \ref{lis:rrt_connect_planner} and it defines how from a $q_{init}$ to a $q_{goal}$ $\in$ \ $C_{free}$, a random configuration tree is generated and expanded until the initial and goal configurations are connected. For RRT-Connect to be defined there are some previous factors to be specified. These are: metric, collision detector, sampler and the extension and they are explained in the implementation section.
+The algorithm used is presented in the listing \ref{lis:rrt_connect_planner} and it defines how from a $q_{\mathrm{init}}$ to a $q_{\mathrm{goal}} \in C_{\mathrm{free}}$, a random configuration tree is generated and expanded until the initial and goal configurations are connected. For RRT-Connect to be defined there are some previous factors to be specified. These are: metric, collision detector, sampler and the extension and they are explained in the implementation section.
 
 \begin{lstlisting}[frame=tb, mathescape=true, xleftmargin=.28\textwidth, xrightmargin=.28\textwidth,caption=RRT-Connect Algorithm, label=lis:rrt_connect_planner]
 $\textbf{CONNECT}$($\Gamma$, $q$)
- 1  repeat 
+ 1  repeat
  2  S $\leftarrow$ EXTEND($\Gamma$,$q$);
  3  until not (S=Advanced)
  4  Return S;
@@ -70,7 +69,7 @@ $\textbf{RRT CONNECT PLANNER}$($q_{init}$,$q_{goal}$)
  8  Return Failure
 \end{lstlisting}
 
-\begin{figure}[!ht]
+\begin{figure}[htb]
 	\centering
 	\includegraphics[width=0.4\textwidth]{figures/rrt_connect}
 	\caption{RRT-Connect Example}
@@ -81,11 +80,11 @@ $\textbf{RRT CONNECT PLANNER}$($q_{init}$,$q_{goal}$)
 
 \section{Path optimization} % (fold)
 \label{sec:path_optimization}
-Due to the speed at which the points are received, the incremental movements of the robot tend to be small, as said above. Therefore, there is little room for path optimization. However given two Q configurations, an interpolation between them is computed.\\
+Due to the speed at which the points are received, the incremental movements of the robot tend to be small, as said above. Therefore, there is little room for path optimization. However given two Q configurations, an interpolation between them is computed.
 
-A natural cubic interpolation as the one showed in figure \ref{fig:cubic interpolation}, is carried out. The number of interpolated steps has to be specified so that a higher number means more smoothness but also more path time and lower speed, and vice versa.
+A natural cubic interpolation as the one showed in Figure \ref{fig:cubic interpolation}, is carried out. The number of interpolated steps has to be specified so that a higher number means more smoothness but also more path time and lower speed, and vice versa.
 
-\begin{figure}[!ht]
+\begin{figure}[htb]
 	\centering
 	\includegraphics[width=0.65\textwidth]{figures/cubic_interpolation}
 	\caption{Cubic interpolation}
@@ -95,8 +94,8 @@ A natural cubic interpolation as the one showed in figure \ref{fig:cubic interpo
 
 \section{Implementation} % (fold)
 \label{sec:implementation_pathplanning}
-In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS node is showed. The whole node has been developed making use of the ROS and RobWork libraries, employing the predefined methods offered by them adjusted to best suit the goal.
-\begin{figure}[!hb]
+In the Figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS node is showed. The whole node has been developed making use of the ROS and RobWork libraries, employing the predefined methods offered by them adjusted to best suit the goal.
+\begin{figure}[htb]
 	\centering
 	\includegraphics[height=14cm]{figures/path_planning_flowchart}
 	\caption{Flowchart of the path planning method}
@@ -107,56 +106,56 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 	\label{sub:contrained_planning_implementation}
 	\subsubsection{X, Y and Z coordinates} % (fold)
 	\label{subsub:x_y_and_z_coordinates}
-	Based on that the 3D point, when received into the node, is referenced to the Camera's frame some constraints can be made.\\
-	
-	The first is fix the distance to which the camera is going to be placed from the point. Then, all the possible camera poses lie on the surface of a sphere whose center is the target and whose radius is the specified distance between the camera and the object in Z.
-	In order to minimize and control the robot displacement, the most suitable pose has been determined to be that in which the center of the camera belong to the plane formed by the robot's Z base axis and the tracked point. 
-	This reduces the set of solutions to the circumference resulting of intersecting the defined plane and the sphere.
-	The fact that the robot is now constrained to this plane, makes inverse kinematics solver more likely to find a possible configuration.\\
+	Based on that the 3D point, when received into the node, is referenced to the Camera's frame some constraints can be made.
 
-	So based on the assumption of fixed distance between the target and the camera, a better way to express its pose would be one which includes this distance as a variable.  
+	The first is fix the distance to which the camera is going to be placed from the point. Then, all the possible camera poses lie on the surface of a sphere whose center is the target and whose radius is the specified distance between the camera and the object in Z.
+	In order to minimize and control the robot displacement, the most suitable pose has been determined to be that in which the center of the camera belong to the plane formed by the robot's Z base axis and the tracked point.
+	This reduces the set of solutions to the circumference resulting of intersecting the defined plane and the sphere.
+	The fact that the robot is now constrained to this plane, makes inverse kinematics solver more likely to find a possible configuration.
+
+	So based on the assumption of fixed distance between the target and the camera, a better way to express its pose would be one which includes this distance as a variable.
 	This means that a distance that allows to keep the tracked object far enough to have its whole shape in the image, but close enough for a valid triangulation, must be defined.
 	For this reason, the 3D point is then expresed in the robot's base frame and then translated to cylindrical coordinates. So the pose vector from \ref{eq:pose_cartesian_coordinates}, now is expressed as shown in \ref{eq:pose_polar_coorinates};
 		\begin{equation}
 		\label{eq:pose_polar_coorinates}
-			Pose = [r,\alpha,z,R,P,Y]
+			\mathrm{Pose} = [r,\alpha,z,R,P,Y]
 		\end{equation}
-	So transforming the 3D point of the tracked object to cylindrical coordinates it can be obtained the desired pose angle $\alpha$ and the radius $r$ from the robot's base axis. 
-	The angle $\alpha$ is the same based on the first assumption and because the camera is wanted to be in the plane formed by the robot's z base axis and the tracked point. 
-	The radius can be calculated as the actual $r_{object}$ minus the desired distance to the object. It is minus because it is wanted to be kept in the direction of the robot's base. 
+	So transforming the 3D point of the tracked object to cylindrical coordinates it can be obtained the desired pose angle $\alpha$ and the radius $r$ from the robot's base axis.
+	The angle $\alpha$ is the same based on the first assumption and because the camera is wanted to be in the plane formed by the robot's z base axis and the tracked point.
+	The radius can be calculated as the actual $r_{object}$ minus the desired distance to the object. It is minus because it is wanted to be kept in the direction of the robot's base.
 	So the camera's pose is now defined as:
 		\begin{equation}
 		\label{eq:cameras_pose_noRPY_noZ}
-			Pose_{camera} = [r_{object},\alpha_{object},z,R,P,Y]
+			\mathrm{Pose}_{\mathrm{camera}} = [r_{\mathrm{object}},\alpha_{\mathrm{object}},z,R,P,Y]
 		\end{equation}
-	The height keeps being an unknown but, and due to the fact that the next position of the object is unknown, no predictions about the height can be made. 
+	The height keeps being an unknown but, and due to the fact that the next position of the object is unknown, no predictions about the height can be made.
 	For this reason the camera's height is assumed to be the same as the tracked object. This assumption included in the equation \ref{eq:cameras_pose_noRPY_noZ} gives:
 		\begin{equation}
 			\label{eq:cameras_pose_noRPY}
-			Pose_{camera} = [r_{object},\alpha_{object},z_{object},R,P,Y]
+			\mathrm{Pose}_{\mathrm{camera}} = [r_{\mathrm{object}},\alpha_{\mathrm{object}},z_{\mathrm{object}},R,P,Y]
 		\end{equation}
 	% subsection x_y_and_z_coordinates (end)
-	\begin{figure}[!ht]
+	\begin{figure}[htb]
 	 	\centering
 	 	\includegraphics[width=0.75\textwidth]{figures/path_planning_constraints}
 	 	\caption{Polar coordinates used for the camera pose constraints}
 	 	\label{fig:path_planning_constraints}
-	 \end{figure} 
-	 
+	 \end{figure}
+
 	\subsubsection{R, P and Y angles} % (fold)
 	\label{subsub:r_p_and_y_angles}
 	Assuming that the X and Y axis of the camera's frame are parallel to the robot's base frame the angles can be obtained easily.
-	This assumption is consistent with the same idea applied in the obtainment of the height. 
-	The future state of the object is unknown and due to the robustness of the system is searched, this assumptions makes more probable for the inverse kinematics solver to find a solution.\\
+	This assumption is consistent with the same idea applied in the obtainment of the height.
+	The future state of the object is unknown and due to the robustness of the system is searched, this assumptions makes more probable for the inverse kinematics solver to find a solution.
 
 
-	So, regarding the the pitch (P) and the yaw (Y), their value is zero (parallel), and respect to the roll (R) -angle over the z axis- it should be only the offset the user wants to apply. 
+	So, regarding the the pitch (P) and the yaw (Y), their value is zero (parallel), and respect to the roll (R) -angle over the z axis- it should be only the offset the user wants to apply.
 	In our case, as the robot was changed, the robot's base was not aligned with the table, so an offset of 25 degrees was added.
 	This offset can also include the angle previously calculated so the camera will always point to the object and being aligned with the robot's base axis.
 
 		\begin{equation}
 			\label{eq:cameras_pose}
-			Pose_{camera} = [r_{object},\alpha_{object},z_{object},\alpha_{object}+offset_{user},0,0]
+			\mathrm{Pose}_{\mathrm{camera}} = [r_{\mathrm{object}},\alpha_{\mathrm{object}},z_{\mathrm{object}},\alpha_{\mathrm{object}} + \mathrm{offset}_{\mathrm{user}},0,0]
 		\end{equation}
 	% subsubsection r_p_and_y_angles (end)
 	% subsection contrained_planning (end)
@@ -165,7 +164,7 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 	\label{sub:rrt_connect_implementation}
 	\subsubsection{Metric} % (fold)
 	\label{sub:metric}
-	The metric is the way two different robot's configurations are measured. This will define the behavior of the planner along with the extension [\ref{sub:extension}]. For this project, the $Euclidean distance$ has been chosen, due to the balance in the measure that all the joints produce. This is defined by:
+	The metric is the way two different robot's configurations are measured. This will define the behavior of the planner along with the extension [\ref{sub:extension}]. For this project, the Euclidean distance has been chosen, due to the balance in the measure that all the joints produce. This is defined by:
 	\begin{equation}
 		d=\sqrt{\sum_i^N q_i^2}
 	\end{equation}
@@ -182,14 +181,14 @@ In the figure \ref{fig:path_planning_flowchart} the flow diagram of this ROS nod
 	% subsection collision_detector (end)
 	\subsubsection{Sampler} % (fold)
 	\label{sub:sampler}
-	The sampler defines how the new configurations need to be created in the $C_{free}$. In this case the sampler chosen has been $Uniform$. This is because of the not patterned geometries so, for example, there is no preference in the direction the new configuration is going to be created.
+	The sampler defines how the new configurations need to be created in the $C_{\mathrm{free}}$. In this case the sampler chosen has been Uniform. This is because of the not patterned geometries so, for example, there is no preference in the direction the new configuration is going to be created.
 	% subsection sampler (end)
 % subsection rrt_connect (end)
 \subsection{Path optimization} % (fold)
 \label{sub:path_optimization_implementation}
-For the path optimization step some interpolation techniques have been tested. 
+For the path optimization step some interpolation techniques have been tested.
 From the Circular Interpolator until the Linear Interpolator, the one with best and smoothest results has been the Cubic Spline Interpolator in its natural spline variance.
-Due to the fact that the speed of the robot was limited, the factor to define the differential step has been the number of divisions made between two robot configurations. 
+Due to the fact that the speed of the robot was limited, the factor to define the differential step has been the number of divisions made between two robot configurations.
 During this project a number of 4 intermediate Q's has been used.
 % subsection path_optimization (end)
 % chapter path_planning (end)

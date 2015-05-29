@@ -1,46 +1,52 @@
 %!TEX root = ../report.tex
 \chapter{Feature extraction} % (fold)
 \label{chap:feature_extraction}
-\section{Introduction}
-This chapter explains how the target object is detected in both images as a previous step for the 3D reconstruction explained in chapter [\ref{chap:stereopsis}]. The algorithm detailed here computes the correspondent points to be tracked in the acquired images which are a necessary input for the triangulation process.
-The tracking of the object is a function implemented inside the node "balltracker" explained in chapter [\ref{chap:ros_nodes_structure}].
+% \section{Introduction}
+This chapter explains how the target object is detected in both images as a previous step for the 3D reconstruction explained in Chapter \ref{chap:stereopsis}. The algorithm detailed here computes the corresponding points to be tracked in the acquired images which are a necessary input for the triangulation process.
+The tracking of the object is a function implemented inside the node ``balltracker'' explained in Chapter \ref{chap:ros_nodes_structure}.
 
 \section{Algorithm}
 
 \subsection{Target definition}
 A key step in the process of tracking and triangulating problems is to provide a marker with features robust enough that avoid matching problems derived from occluding edges, homogeneous areas or repetitive structures.
-In the case of occluding edges, the main issue is that a point on the border of the marker for one camera usually matches a different one from the other camera (specially for round or cylindrical objects) due to the change on the perspective.
+In the case of occluding edges, the main issue is that a point on the border of the marker for one camera usually matches a different one from the other camera (specially for round or cylindrical objects) due to the change of perspective.
 Furthermore, the problem with homogeneous areas is that all the patches of a smooth surface with a constant illumination look exactly the same and can be mismatched.
 Finally, the problem of repetitive surfaces affects mainly when it comes to matching images containing structures like fences or buildings which are usually very repetitive and can lead to mismatch features because they look too similar.
 
-To avoid these problems, it was decided to use a sphere as a target object for detecting its center of mass.
+To avoid these problems, it was decided to use a sphere as a target object and detect its center of mass.
 The reason is that the surface of the ball, which is thus the feature used for detection, can be seen equally from both cameras disregarding their orientation.
 Proceeding this way, the difficulties related to occluding edges and homogeneous surfaces can be avoided.
 What is more, the ball itself is not a repetitive structure, so that it does not produce a problem either and can be easily extracted from the background.
 
 \subsection{Image processing}
-To achieve a reliable detection of the target in both images it was decided to use the contours finder provided by OpenCV.
-The necessary binary images input to the finder, according to \cite{suzuki}, are obtained thresholding in HSV.
-This is due to the fact that it turned out that the target color is easier to define in HSV than RGB, so that a robust, light invariant threshold can be computed and applied. The resulting image can be seen in figure \ref{fig:binary_image}.
-However, this process yields some artifacts in the image which need to be removed for the contour finder not to detect too many unnecessary contours.
+To achieve a reliable detection of the target in both images it was decided to use the contours finder algorithm by Suzuki and Abe \cite{suzuki} (an implementation -- \texttt{findContours} -- is provided in OpenCV).
+The necessary binary images for input to the finder algorithm are obtained by thresholding in HSV color space.
+It turned out that the target color is easier to define in HSV than RGB, so that a robust, light invariant threshold can be computed and applied. The resulting image can be seen in Figure \ref{fig:binary_image}.
+However, this process yields some artifacts in the image which need to be removed so the contour finder does not detect too many unnecessary contours.
 
-\begin{figure}[!ht]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/binary.png}
     \caption{Binary image obtained after applying color threshold}
     \label{fig:binary_image}
 \end{figure}
 
-To filter out these artifacts two morphological operators are applied. First of all an opening operation with a square kernel of 9x9 pixels which removes the small blobs spread across the image and keeps the target intact. After, a closing operation is performed with the same kernel. The aim of this step is reducing the size of the gaps that appear inside the target after the thresholding in order to get a solid object. The result of the process can be seen in figure \ref{fig:filtered_image}.
+To filter out these artifacts two morphological operators are applied.
+First an opening operation with a square kernel of $9 \times 9$ pixels, which removes the small blobs spread across the image and keeps the target intact.
+Afterwards a closing operation is performed with the same kernel.
+The aim of this step is reducing the size of the gaps that appear inside the target after the thresholding in order to get a solid object.
+The result of the process can be seen in Figure \ref{fig:filtered_image}.
 
-\begin{figure}[h]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.6\textwidth]{figures/filtered.png}
     \caption{Binary image obtained after applying the morphological operations}
     \label{fig:filtered_image}
 \end{figure}
 
-After removing the smallest objects from the binary image and closed the gaps in the remaining ones the finding contours function is applied, obtaining an array with the detected contours. Following, the area and the outer perimeter of all the contours are computed. With these values, a radius threshold, $r_\mathrm{threshold}$, is applied so that only the contours with enough radius are accepted. To do so, the equations for the perimeter and the area of a circumference are applied as it can be seen in equations \ref{eq:circ_perimeter} and \ref{eq:circ_area}.
+After removing the smallest objects from the binary image and closing the gaps in the remaining ones, the \texttt{findContours} function is applied, obtaining an array with the detected contours.
+Following, the area and the outer perimeter of all the contours are computed. With these values, a radius threshold, $r_\mathrm{threshold}$, is defined so that only the contours with large enough radius are accepted.
+To filter unwanted contours, the equations for perimeter and area of a circle are applied as seen in Eq. \eqref{eq:circ_perimeter} and \eqref{eq:circ_area}.
 
 \begin{equation}
 \mathrm{perimeter}_\mathrm{contour} > 2 \pi r_\mathrm{threshold}
@@ -52,7 +58,7 @@ After removing the smallest objects from the binary image and closed the gaps in
 \label{eq:circ_area}
 \end{equation}
 
-Following, the circularity of the contours that have a radius bigger than the specified threshold is computed according to equation \ref{eq:circularity}, which gives a value between 1 and 0 (being 1 a perfect circle, and 0 a straight line). Having this value computed, a threshold for the circularity is set so that only the target passes it. Finally, the moments, $m$, of the remaining contour (the target) are calculated so that the centroids can be computed according to equation \ref{eq:centroids}. Then, these values are returned so that the stereopsis function can compute the 3D points of the target.
+The circularity of the contours that have a radius bigger than the specified threshold is computed according to Eq. \eqref{eq:circularity}, which gives a value between 1 and 0 (being 1 a perfect circle, and 0 a straight line). Having this value computed, a threshold for the circularity is set so that only the target passes it. Finally, the moments, $m$, of the remaining contour (the target) are calculated so that the centroids can be computed according to Eq. \eqref{eq:centroids}. Then, these values are returned so that the stereopsis function can compute the 3D points of the target.
 
 \begin{equation}
 \mathrm{circularity} = \frac{4 \, \pi \, \mathrm{area}_\mathrm{contour}}{\mathrm{perimeter}_\mathrm{contour}^{2}}

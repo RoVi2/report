@@ -1,18 +1,16 @@
+%!TEX root = ../report.tex
 \begin{abstract}
-A workcell consisting of a PA10 robot with a tool mounted stereo rig and surrounded by walls has been programmed to perform three-dimensional path generation for keeping a target inside the field of view of the cameras. 
-The resulting algorithm, created and implemented in ROS, is composed of a structure of nodes whose inputs are the pairs of images acquired by the cameras and that outputs the robot joint configurations required to safely follow the target.
-In the vision side, the target detection in both rectified images is carried out, leading to a triangulation process in which the 3D position of the target is accurately extracted with respect to the stereo rig.
-The extracted coordinates are after used to compute the future position of the target based on its physical model by means of a Kalman filter. 
-Once obtained, both positions are utilized in the robotics side of the project to carry out the path planning.
-The desired, collision-free position of the camera rig is computed from the target position, and the necessary displacement calculated in the joint configuration space applying inverse kinematics. 
-Before executing the displacement, a collision detector and a path optimizer algorithms are employed. 
-However, if the straight line trajectory contains obstacles, an RRT-planner finds a safe different path between configurations.\\
-The system has been successfully tested in both simulation and the workcell, and subjected to experiments to measure the magnitude of the errors in the performance. 
-It has proved robustness and reliability, although certain limits imposed by the robot conditions have constrained the goodness of the final results.
+A work cell consisting of a PA10 robotic arm with a tool mounted stereo rig and surrounded by walls has been programmed to perform three-dimensional path generation for keeping a target inside the field of view of the cameras.
+The resulting system, implemented in C++ with ROS middleware, is composed of a structure of nodes whose inputs are the pairs of images acquired by the cameras.
+The outputs are robot joint configurations required to safely follow the target object.
 
+In the vision side, object detection in the rectified images is performed, leading to a triangulation process in which the 3D position of the target is extracted.
+The extracted coordinates are used to predict future positions of the target, based on its physical model, by means of a Kalman filter.
+% Once obtained, both positions are utilized in the robotics side of the project to carry out the path planning.
+The desired, collision-free position of the robotic arm is computed by applying inverse kinematics.
+% Before executing the displacement, a collision detector and a path optimizer algorithms are employed.
+However, if the straight line trajectory contains obstacles, an RRT-planner finds a different path between configurations.
 
-
-
-
-
+The system has been successfully run in both simulation and in the physical work cell. Experiments to gage the performance and magnitude of any errors have been carried out. Failure when attempting to move joints in large steps has been discovered.
+% It has proved robustness and reliability, although certain limits imposed by the robot conditions have constrained the goodness of the final results.
 \end{abstract}

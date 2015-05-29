@@ -2,25 +2,25 @@
 
 \chapter{Conclusions} % (fold)
 \label{cha:conclusions}
-As a general conclusion, the developed system has been successfully tested in both simulation and the workcell, as can be seen in the videos in \cite{results1} and \cite{results2}, and subjected to experiments to measure the magnitude of the errors in the performance, as showed in Chapter \ref{cha:experiments}.
+As a general conclusion, the developed system has been successfully tested in both simulation and the work cell, as can be seen in the videos in \cite{results1} and \cite{results2}, and subjected to experiments to measure the magnitude of the errors in the performance, as showed in Chapter~\ref{cha:experiments}.
 It has proved robustness and reliability, although certain limits imposed by the robot conditions have constrained the goodness of the final results. Some specific conclusions and further work are discussed at this point.
 
 \section{Stereo vision part}
 On the vision part of the system, some main points can be highlighted.
 The final implementation of the feature extraction algorithm for the image processing part, together with the specific design of the target have resulted in an illumination and background invariant detector, able to find reliably the target under changing environmental conditions.
 Furthermore, the multithreading processing implemented to speed up the reception of the pictures acquired by the cameras, together with the use of the ROS message filters approximate sync policy to ensure their synchronization, have supposed a relevant enhancement of the system performance.
-However, something that might be left as further work could be the application of the epipolar geometry theory to the correspondence problem in the detection part, in order to make it faster and more accurate as a previous step to the triangulation. 
+However, something that might be left as further work could be the application of the epipolar geometry theory to the correspondence problem in the detection part, in order to make it faster and more accurate as a previous step to the triangulation.
 Noe two separate detection processes are being carried out in each image, which work correctly, even though the epipolar constraint is not checked for the output coordinates.
 
 \section{Trajectory prediction}
-Following the vision part of the system, a Kalman filter was used in order to predict the trajectory of the object being tracked.\\
-The choice of a Kalman filter instead of any others proved good and fast enough even though the movement being tracked was a random movement performed by a human instead of a free falling object or something similar. Actually, for being such a random movement, the covariances computed proved to be good enough, as the filter was able to predict the movement with an error up to 30 cm according to figure \ref{fig:ball_kalman_error}.
+Following the vision part of the system, a Kalman filter was used in order to predict the trajectory of the object being tracked.
+The choice of a Kalman filter instead of any others proved good and fast enough even though the movement being tracked was a random movement performed by a human instead of a free falling object or something similar. Actually, for being such a random movement, the covariances computed proved to be good enough, as the filter was able to predict the movement with an error up to 30 cm according to Figure \ref{fig:ball_kalman_error}.
 
 \section{Path planning}
-A simple query path planning RRT-Connect, with constrained planning and path optimization has been implemented. \\
-On one hand, the assumptions made when generating the constrained robot configurations have proved to be valid for our experiments. 
+A simple query path planning RRT-Connect, with constrained planning and path optimization has been implemented.
+On one hand, the assumptions made when generating the constrained robot configurations have proved to be valid for our experiments.
 Furthermore, the RRT-Connect not only has showed to be valid for the project but also has extended our knowledge in this topic, which is inside of the scope of this course.
-On the path optimization part, the natural cubic splines have demonstrated to be a good and useful tool when interpolating two Q's, smoothing the robot movements. Everything has been implemented inside a ROS node and using the RobWork libraries so a further understanding of those has been achieved, but also two auxiliary plugins, the $server point$ and the $Robwork plugin$, has been implemented in parallel so that this node could be tested without depending on the others.\\
+On the path optimization part, the natural cubic splines have demonstrated to be a good and useful tool when interpolating two Q's, smoothing the robot movements. Everything has been implemented inside a ROS node and using the RobWork libraries so a further understanding of those has been achieved, but also two auxiliary plug-ins, the points server and the Robwork plug-in, has been implemented in parallel so that this node could be tested without depending on the others.
 On the other hand, some speed related problems have been found unsolvable and slow down the overall execution. Also the main issue in this part is in the inverse kinematics solver, which does not always provide a solution, maybe due to the constraints applied to the camera pose.
 
 % chapter conclusions (end)

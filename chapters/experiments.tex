@@ -28,10 +28,10 @@ The experiment is performed by sending a number of desired joint configurations 
 \end{figure}
 
 
-An optimal performance of the system would yield a minimal or none difference between current and desired configurations. 
+An optimal performance of the system would yield a minimal or none difference between current and desired configurations.
 However, the results shows otherwise.
 It can be seen that for big steps between the input and current joint positions the actuators do not behave as intended.
-This loss of the expected path is translated into small disruptions in the robot movements that can be seen when following the target. 
+This loss of the expected path is translated into small disruptions in the robot movements that can be seen when following the target.
 The mistakes in the behavior can be partially due to errors in the mechanical part, but more likely to constraints in the PA10 controller
 
 Further probing reveals that this problem is not common in PA10 models, but the particular one used in this project has an error.
@@ -39,8 +39,8 @@ At the time of writing, no measures have been taken to solve the problem, but a 
 If the desired move is greater than the limit, the system should split the move into several smaller ones.
 
 
-\section{Precision of object detection}
-Backprojection?
+% \section{Precision of object detection}
+% Backprojection?
 
 
 \section{Detected object position and Kalman filter estimate}
@@ -81,11 +81,19 @@ In general, whenever the ball changes direction, velocity or acceleration the er
 
 
 \section{Paths planning around obstacles}
-lañksdjfñlasdfljkasdf
-A video with the robot avoiding the obstacles have been taken and can be seen online \cite{results2}.
-\begin{figure}[!ht]
+When no straight-line between configurations is available (because of obstacles in the work cell), an RRT planning algorithm is applied.
+To verify that the path generation does indeed work and can move the robotic arm around obstacles, an experiment is designed in a simulated environment.
+
+In this experiment obstacles are placed in the virtual scene description, as depicted in Figure~\ref{fig:collision_avoidance}, a screen capture from RobWorkStudio.
+
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.75\textwidth]{figures/collision_avoidance}
     \caption{The robot follows the ball avoiding collide with the virtual obstacles}
     \label{fig:collision_avoidance}
 \end{figure}
+
+A video with the robot avoiding the obstacles have been taken and can be seen online \cite{results2}.
+
+The experiment that configurations for moving the robotic arm around obstacles are indeed generated and sent to the robot controller.
+
